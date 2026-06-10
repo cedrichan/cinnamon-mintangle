@@ -218,6 +218,18 @@ Do not duplicate the full product spec in `AGENTS.md`. Reference `PRODUCT.md` in
 
 Update documentation in the same change as behavior changes.
 
+## Workflow
+
+Do not make assumptions. If there is ambiguity, ask for clarification during planning and before implementation. You may suggest resonable approaches with pros and cons while you get clarification.
+
+Always plan first and get the plan reviewed before implementation.
+
+Once reviewed and checked off, save the plan as a markdown file into the repository under `docs/plans` prefixed by the current ISO timestamp.
+
+If there are subsequent deviations from the plan while working on that plan, note the deviation in the plan file. Always keep the plan file for the current task up to date.
+
+If we are working off a backlog entry in the repository, archive the backlog item into `docs/backlog/done` when done working
+
 ## Style
 
 Prefer clear, boring code.
@@ -239,10 +251,11 @@ Do not add broad dependencies unless they are necessary and justified.
 Before considering a task complete, check:
 
 1. Does the implementation still match `PRODUCT.md`?
-2. Are default shortcuts and action IDs consistent?
-3. Does enable/disable clean up registered keybindings?
-4. Does the extension fail safely?
-5. Are settings persisted correctly?
-6. Is user-facing documentation updated if behavior changed?
-7. Is there a manual test note for the changed behavior?
+2. Have we followed the plan file to completion?
+3. Are default shortcuts and action IDs consistent?
+4. Does enable/disable clean up registered keybindings?
+5. Does the extension fail safely?
+6. Are settings persisted correctly?
+7. Is user-facing documentation updated if behavior changed?
+8. Is there a manual test note for the changed behavior?
 

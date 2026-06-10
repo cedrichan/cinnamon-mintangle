@@ -1,0 +1,248 @@
+# AGENTS.md
+
+## Project
+
+Mintangle is a Linux Mint Cinnamon extension that provides Rectangle.app-style keyboard window management for the Cinnamon desktop.
+
+This repository’s source of truth for product behavior is `PRODUCT.md`.
+
+Before making product-facing changes, read `PRODUCT.md` and preserve its specified behavior unless the user explicitly asks to change it.
+
+## High-Level Goal
+
+Build a reliable, keyboard-first Cinnamon extension for moving and resizing the focused window.
+
+The extension should feel native to Linux Mint Cinnamon, be predictable under repeated shortcut use, and avoid surprising users with hidden behavior not described in `PRODUCT.md`.
+
+## Technology
+
+Target platform:
+
+* Linux Mint Cinnamon
+* Cinnamon extension system
+* Cinnamon/Muffin window manager
+* GJS JavaScript runtime
+* GTK/Cinnamon settings UI conventions
+
+Prefer Cinnamon and Muffin APIs directly.
+
+Avoid external shell commands for core behavior such as:
+
+* Getting the focused window
+* Registering shortcuts
+* Moving windows
+* Resizing windows
+* Reading monitor geometry
+* Reading work-area geometry
+
+External tools may be used for development scripts, packaging, linting, or diagnostics, but not as runtime dependencies for core window-management behavior unless explicitly justified.
+
+## Repository Structure
+
+Prefer this structure unless there is a strong Cinnamon-specific reason to change it:
+
+```text
+metadata.json
+extension.js
+prefs.js
+settings-schema.json
+README.md
+PRODUCT.md
+AGENTS.md
+src/
+  actions.js
+  geometry.js
+  keybindings.js
+  settings.js
+  state.js
+```
+
+Responsibilities:
+
+* `extension.js`: Cinnamon extension lifecycle, initialization, enable/disable wiring.
+* `prefs.js`: settings UI entrypoint.
+* `src/actions.js`: action dispatch and mapping between action IDs and geometry operations.
+* `src/geometry.js`: pure or mostly pure geometry calculations.
+* `src/keybindings.js`: shortcut registration, unregistration, and rebinding.
+* `src/settings.js`: settings loading, validation, defaults, and change listeners.
+* `src/state.js`: in-memory per-window state for repeated commands and restore behavior.
+
+Keep product constants centralized. Avoid scattering action IDs, default shortcuts, and setting names across unrelated files.
+
+## Coding Principles
+
+### Preserve Product Semantics
+
+Do not “improve” shortcut behavior, cycling behavior, margins, or action names without updating `PRODUCT.md` first.
+
+If implementation details conflict with `PRODUCT.md`, stop and resolve the product spec rather than silently choosing different behavior.
+
+### Keep Geometry Deterministic
+
+Window placement should be computed from:
+
+* action ID
+* active monitor work area
+* orientation
+* margin settings
+* repeat state, when applicable
+
+Avoid ad hoc geometry special cases unless they are documented.
+
+All geometry calculations should produce integer `x`, `y`, `width`, and `height` values.
+
+Clamp invalid or too-small rectangles safely.
+
+### Separate Calculation from Side Effects
+
+Keep geometry calculation separate from Cinnamon window mutation.
+
+Prefer this flow:
+
+1. Resolve focused window.
+2. Determine active monitor/work area.
+3. Determine action and repeat-cycle state.
+4. Calculate target rectangle.
+5. Validate and clamp rectangle.
+6. Apply move/resize.
+7. Update runtime state.
+
+This makes behavior easier to test and debug.
+
+### Respect Work Areas
+
+Always prefer monitor work areas over raw monitor bounds.
+
+Window placement should respect Cinnamon panels and other reserved desktop areas.
+
+Only fall back to raw monitor geometry if work-area geometry is unavailable.
+
+### Fail Safely
+
+No focused window, unsupported window type, non-resizable window, failed keybinding registration, or unavailable monitor geometry should not crash the extension.
+
+Log useful errors for developers.
+
+User-visible error notifications should follow the settings defined in `PRODUCT.md`.
+
+### Do Not Poll
+
+Avoid continuous polling.
+
+Use Cinnamon events, settings listeners, and keybinding callbacks.
+
+Hotkey actions should be synchronous and fast.
+
+### Runtime State Should Be Lightweight
+
+Per-window state is allowed for:
+
+* repeated shortcut cycling
+* last action
+* last cycle index
+* previous frame for restore
+* last Mintangle-applied frame
+
+Do not persist per-window state across Cinnamon restarts.
+
+### Settings Should Be User-Recoverable
+
+Settings UI should make it easy to:
+
+* view shortcuts
+* capture shortcuts
+* clear shortcuts
+* reset shortcuts
+* reset all settings
+
+Shortcut registration errors or conflicts should be visible in settings where practical.
+
+## Action IDs
+
+Use the action IDs defined in `PRODUCT.md`.
+
+Do not rename action IDs casually, because settings, keybindings, tests, and documentation depend on them.
+
+When adding a new action:
+
+1. Add it to `PRODUCT.md`.
+2. Add a default shortcut or explicitly mark it unbound.
+3. Add geometry behavior.
+4. Add settings UI support.
+5. Add manual test coverage.
+6. Update README documentation.
+
+## Margins
+
+Margins are product behavior, not cosmetic decoration.
+
+Implement margin behavior in the shared geometry layer so every layout action receives consistent treatment.
+
+Do not implement per-action margin hacks.
+
+## Multi-Monitor Behavior
+
+Display movement should preserve relative frame geometry where practical.
+
+Layout actions should apply to the focused window’s active monitor.
+
+Repeated left/right shortcuts should not move windows between displays unless `PRODUCT.md` is changed.
+
+## Testing and Verification
+
+At minimum, verify manually on Linux Mint Cinnamon:
+
+* Extension enable/disable
+* Settings page opens
+* Default shortcuts register
+* Shortcut capture works
+* Shortcut reset works
+* Core layouts work
+* Margins apply consistently
+* Repeated shortcut positioning works
+* Restore works
+* Next/previous display works
+* Non-resizable or unsupported windows do not crash the extension
+
+When possible, keep geometry calculations testable outside Cinnamon by making `src/geometry.js` independent of Cinnamon globals.
+
+## Documentation
+
+Keep `README.md` user-facing.
+
+Keep `PRODUCT.md` product-facing.
+
+Keep `AGENTS.md` agent/developer-facing.
+
+Do not duplicate the full product spec in `AGENTS.md`. Reference `PRODUCT.md` instead.
+
+Update documentation in the same change as behavior changes.
+
+## Style
+
+Prefer clear, boring code.
+
+Use descriptive names.
+
+Avoid clever abstractions.
+
+Keep files small enough that future coding agents can understand them quickly.
+
+Prefer explicit action mappings over dynamic magic.
+
+Add comments where Cinnamon or Muffin APIs are non-obvious.
+
+Do not add broad dependencies unless they are necessary and justified.
+
+## Before Completing a Change
+
+Before considering a task complete, check:
+
+1. Does the implementation still match `PRODUCT.md`?
+2. Are default shortcuts and action IDs consistent?
+3. Does enable/disable clean up registered keybindings?
+4. Does the extension fail safely?
+5. Are settings persisted correctly?
+6. Is user-facing documentation updated if behavior changed?
+7. Is there a manual test note for the changed behavior?
+

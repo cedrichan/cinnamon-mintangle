@@ -1,0 +1,11 @@
+{
+    "uuid": "mintangle@cedrichan",
+    "name": "Mintangle",
+    "description": "Rectangle.app-style keyboard window management for the Cinnamon desktop.",
+    "version": "0.1.0",
+    "cinnamon-version": [
+        "6.0",
+        "6.2",
+        "6.4"
+    ]
+}

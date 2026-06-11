@@ -19,9 +19,8 @@ import { dirname, join } from 'node:path';
 const repoRoot = join(dirname(fileURLToPath(import.meta.url)), '..');
 const outDir = join(repoRoot, 'build');
 
-// Static files copied verbatim into the build. Add settings-schema.json here
-// once the settings backlog (BL-11/BL-15) introduces it.
-const staticAssets = ['metadata.json'];
+// Static files copied verbatim into the build.
+const staticAssets = ['metadata.json', 'settings-schema.json'];
 
 // Top-level globals the legacy GJS loader hands to Cinnamon.
 const lifecycleHooks = ['init', 'enable', 'disable'];

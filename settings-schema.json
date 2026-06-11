@@ -1,0 +1,176 @@
+{
+  "enable-cycling": {
+    "type": "switch",
+    "default": true,
+    "description": "Enable repeated command cycling"
+  },
+  "repeat-timeout": {
+    "type": "spinbutton",
+    "default": 1500,
+    "min": 100,
+    "max": 10000,
+    "step": 100,
+    "units": "ms",
+    "description": "Repeat timeout"
+  },
+  "enable-half-cycling": {
+    "type": "switch",
+    "default": true,
+    "description": "Enable half position cycling"
+  },
+  "enable-third-cycling": {
+    "type": "switch",
+    "default": true,
+    "description": "Enable third position cycling"
+  },
+  "enable-fourth-cycling": {
+    "type": "switch",
+    "default": true,
+    "description": "Enable fourth position cycling"
+  },
+  "enable-corner-cycling": {
+    "type": "switch",
+    "default": true,
+    "description": "Enable corner position cycling"
+  },
+  "enable-display-cycling": {
+    "type": "switch",
+    "default": true,
+    "description": "Enable display cycling"
+  },
+  "shortcut-left-half": {
+    "type": "keybinding",
+    "default": "<Primary><Super>Left",
+    "description": "Left Half"
+  },
+  "shortcut-right-half": {
+    "type": "keybinding",
+    "default": "<Primary><Super>Right",
+    "description": "Right Half"
+  },
+  "shortcut-top-half": {
+    "type": "keybinding",
+    "default": "<Primary><Super>Up",
+    "description": "Top Half"
+  },
+  "shortcut-bottom-half": {
+    "type": "keybinding",
+    "default": "<Primary><Super>Down",
+    "description": "Bottom Half"
+  },
+  "shortcut-center-half": {
+    "type": "keybinding",
+    "default": "<Primary><Super>h",
+    "description": "Center Half"
+  },
+  "shortcut-top-left": {
+    "type": "keybinding",
+    "default": "<Primary><Super>u",
+    "description": "Top Left"
+  },
+  "shortcut-top-right": {
+    "type": "keybinding",
+    "default": "<Primary><Super>i",
+    "description": "Top Right"
+  },
+  "shortcut-bottom-left": {
+    "type": "keybinding",
+    "default": "<Primary><Super>j",
+    "description": "Bottom Left"
+  },
+  "shortcut-bottom-right": {
+    "type": "keybinding",
+    "default": "<Primary><Super>k",
+    "description": "Bottom Right"
+  },
+  "shortcut-first-third": {
+    "type": "keybinding",
+    "default": "<Primary><Super>d",
+    "description": "First Third"
+  },
+  "shortcut-center-third": {
+    "type": "keybinding",
+    "default": "<Primary><Super>f",
+    "description": "Center Third"
+  },
+  "shortcut-last-third": {
+    "type": "keybinding",
+    "default": "<Primary><Super>g",
+    "description": "Last Third"
+  },
+  "shortcut-first-two-thirds": {
+    "type": "keybinding",
+    "default": "<Primary><Super>e",
+    "description": "First Two Thirds"
+  },
+  "shortcut-last-two-thirds": {
+    "type": "keybinding",
+    "default": "<Primary><Super>t",
+    "description": "Last Two Thirds"
+  },
+  "shortcut-first-fourth": {
+    "type": "keybinding",
+    "default": "<Primary><Super>1",
+    "description": "First Fourth"
+  },
+  "shortcut-second-fourth": {
+    "type": "keybinding",
+    "default": "<Primary><Super>2",
+    "description": "Second Fourth"
+  },
+  "shortcut-third-fourth": {
+    "type": "keybinding",
+    "default": "<Primary><Super>3",
+    "description": "Third Fourth"
+  },
+  "shortcut-last-fourth": {
+    "type": "keybinding",
+    "default": "<Primary><Super>4",
+    "description": "Last Fourth"
+  },
+  "shortcut-first-three-fourths": {
+    "type": "keybinding",
+    "default": "<Primary><Super>5",
+    "description": "First Three Fourths"
+  },
+  "shortcut-last-three-fourths": {
+    "type": "keybinding",
+    "default": "<Primary><Super>6",
+    "description": "Last Three Fourths"
+  },
+  "shortcut-maximize": {
+    "type": "keybinding",
+    "default": "<Primary><Super>Return",
+    "description": "Maximize"
+  },
+  "shortcut-almost-maximize": {
+    "type": "keybinding",
+    "default": "<Primary><Super>m",
+    "description": "Almost Maximize"
+  },
+  "shortcut-center": {
+    "type": "keybinding",
+    "default": "<Primary><Super>c",
+    "description": "Center"
+  },
+  "shortcut-center-prominently": {
+    "type": "keybinding",
+    "default": "<Primary><Super>p",
+    "description": "Center Prominently"
+  },
+  "shortcut-restore": {
+    "type": "keybinding",
+    "default": "<Primary><Super>BackSpace",
+    "description": "Restore"
+  },
+  "shortcut-next-display": {
+    "type": "keybinding",
+    "default": "<Primary><Super><Alt>Right",
+    "description": "Next Display"
+  },
+  "shortcut-previous-display": {
+    "type": "keybinding",
+    "default": "<Primary><Super><Alt>Left",
+    "description": "Previous Display"
+  }
+}

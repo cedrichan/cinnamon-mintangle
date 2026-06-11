@@ -273,3 +273,84 @@ export function placeLastTwoThirds(workArea: Rect): Rect {
     };
   }
 }
+
+// ---------------------------------------------------------------------------
+// Fourths & three-fourths placements (BL-06)
+//
+// Orientation-aware: landscape divides horizontally, portrait vertically.
+// Boundaries are computed with Math.round so adjacent slots share the same
+// pixel edge — rounding error is at most 1px (satisfies acceptance criterion).
+// ---------------------------------------------------------------------------
+
+/**
+ * Compute the four slot boundaries along the primary axis.
+ *
+ * Returns an array of 5 values [b0, b1, b2, b3, b4] where b0 = origin offset
+ * and b4 = origin offset + total extent. Each slot i spans [b[i], b[i+1]).
+ */
+function fourthBoundaries(origin: number, extent: number): [number, number, number, number, number] {
+  return [
+    origin,
+    origin + Math.round(extent / 4),
+    origin + Math.round(extent / 2),
+    origin + Math.round((3 * extent) / 4),
+    origin + extent,
+  ];
+}
+
+function placeFourthSlot(workArea: Rect, margin: number, slot: 0 | 1 | 2 | 3): Rect {
+  const available = applyMargins(workArea, margin);
+  let rect: Rect;
+  if (isLandscape(available)) {
+    const b = fourthBoundaries(available.x, available.width);
+    rect = { x: b[slot], y: available.y, width: b[slot + 1] - b[slot], height: available.height };
+  } else {
+    const b = fourthBoundaries(available.y, available.height);
+    rect = { x: available.x, y: b[slot], width: available.width, height: b[slot + 1] - b[slot] };
+  }
+  return clampRect(integerRect(rect), available);
+}
+
+export function placeFirstFourth(workArea: Rect, margin: number): Rect {
+  return placeFourthSlot(workArea, margin, 0);
+}
+
+export function placeSecondFourth(workArea: Rect, margin: number): Rect {
+  return placeFourthSlot(workArea, margin, 1);
+}
+
+export function placeThirdFourth(workArea: Rect, margin: number): Rect {
+  return placeFourthSlot(workArea, margin, 2);
+}
+
+export function placeLastFourth(workArea: Rect, margin: number): Rect {
+  return placeFourthSlot(workArea, margin, 3);
+}
+
+export function placeFirstThreeFourths(workArea: Rect, margin: number): Rect {
+  const available = applyMargins(workArea, margin);
+  let rect: Rect;
+  if (isLandscape(available)) {
+    const b = fourthBoundaries(available.x, available.width);
+    // Slots 0–2: from b[0] to b[3]
+    rect = { x: b[0], y: available.y, width: b[3] - b[0], height: available.height };
+  } else {
+    const b = fourthBoundaries(available.y, available.height);
+    rect = { x: available.x, y: b[0], width: available.width, height: b[3] - b[0] };
+  }
+  return clampRect(integerRect(rect), available);
+}
+
+export function placeLastThreeFourths(workArea: Rect, margin: number): Rect {
+  const available = applyMargins(workArea, margin);
+  let rect: Rect;
+  if (isLandscape(available)) {
+    const b = fourthBoundaries(available.x, available.width);
+    // Slots 1–3: from b[1] to b[4]
+    rect = { x: b[1], y: available.y, width: b[4] - b[1], height: available.height };
+  } else {
+    const b = fourthBoundaries(available.y, available.height);
+    rect = { x: available.x, y: b[1], width: available.width, height: b[4] - b[1] };
+  }
+  return clampRect(integerRect(rect), available);
+}

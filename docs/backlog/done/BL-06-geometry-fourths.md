@@ -1,6 +1,6 @@
 # BL-06 — Geometry: fourths & three-fourths (orientation-aware)
 
-- **Status:** Not started
+- **Status:** Done
 - **Priority:** P1
 - **Depends on:** BL-03
 - **Parallelizable with:** BL-04, BL-05, BL-07

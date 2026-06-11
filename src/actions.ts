@@ -105,7 +105,6 @@ export function dispatchAction(
   const workArea = _resolveWorkArea(win);
   if (!workArea) return;
 
-  // Margin is 0 until BL-15 exposes it as a user setting.
   const margin = 0;
 
   // --- Special cases --------------------------------------------------------
@@ -117,7 +116,7 @@ export function dispatchAction(
   }
 
   if (actionId === ActionId.NEXT_DISPLAY || actionId === ActionId.PREVIOUS_DISPLAY) {
-    _handleDisplayMovement(win, windowId, actionId, currentFrame, workArea, stateManager, settings);
+    _handleDisplayMovement(win, windowId, actionId, currentFrame, workArea, stateManager);
     return;
   }
 
@@ -174,10 +173,7 @@ function _handleDisplayMovement(
   currentFrame: Rect,
   currentWorkArea: Rect,
   stateManager: WindowStateManager,
-  settings: MintangleSettings,
 ): void {
-  if (!settings.enableDisplayCycling()) return;
-
   const monitorCount = global.display.get_n_monitors();
   if (monitorCount < 2) return;
 

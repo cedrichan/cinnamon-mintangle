@@ -380,13 +380,9 @@ Keep these settings:
 | ------------------------------- | ---------: | ------: |
 | Enable repeated command cycling |    boolean |    true |
 | Repeat timeout                  | integer ms |    1500 |
-| Enable half position cycling    |    boolean |    true |
-| Enable third position cycling   |    boolean |    true |
-| Enable fourth position cycling  |    boolean |    true |
-| Enable corner position cycling  |    boolean |    true |
-| Enable display cycling          |    boolean |    true |
 
-If a position-cycling category is disabled, repeated shortcuts should reapply the first/default placement for that action.
+When cycling is disabled, repeated shortcut presses reapply the same position.
+Display movement (next/previous display) always works regardless of the cycling setting.
 
 ## Acceptance Test Updates
 

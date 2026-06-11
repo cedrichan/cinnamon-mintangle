@@ -14,11 +14,6 @@ import { ActionId, DEFAULT_SHORTCUTS } from './constants.js';
 
 export const KEY_ENABLE_CYCLING = 'enable-cycling';
 export const KEY_REPEAT_TIMEOUT = 'repeat-timeout';
-export const KEY_ENABLE_HALF_CYCLING = 'enable-half-cycling';
-export const KEY_ENABLE_THIRD_CYCLING = 'enable-third-cycling';
-export const KEY_ENABLE_FOURTH_CYCLING = 'enable-fourth-cycling';
-export const KEY_ENABLE_CORNER_CYCLING = 'enable-corner-cycling';
-export const KEY_ENABLE_DISPLAY_CYCLING = 'enable-display-cycling';
 
 /** Returns the settings key for a per-action shortcut binding. */
 export function shortcutKey(action: ActionId): string {
@@ -53,26 +48,6 @@ export class MintangleSettings {
 
   repeatTimeout(): number {
     return this._getInt(KEY_REPEAT_TIMEOUT, REPEAT_TIMEOUT_DEFAULT, REPEAT_TIMEOUT_MIN, REPEAT_TIMEOUT_MAX);
-  }
-
-  enableHalfCycling(): boolean {
-    return this._getBool(KEY_ENABLE_HALF_CYCLING, true);
-  }
-
-  enableThirdCycling(): boolean {
-    return this._getBool(KEY_ENABLE_THIRD_CYCLING, true);
-  }
-
-  enableFourthCycling(): boolean {
-    return this._getBool(KEY_ENABLE_FOURTH_CYCLING, true);
-  }
-
-  enableCornerCycling(): boolean {
-    return this._getBool(KEY_ENABLE_CORNER_CYCLING, true);
-  }
-
-  enableDisplayCycling(): boolean {
-    return this._getBool(KEY_ENABLE_DISPLAY_CYCLING, true);
   }
 
   shortcut(action: ActionId): string {

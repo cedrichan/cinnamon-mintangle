@@ -1,4 +1,8 @@
 {
+  "cycling-header": {
+    "type": "header",
+    "description": "Cycling"
+  },
   "enable-cycling": {
     "type": "switch",
     "default": true,
@@ -13,35 +17,19 @@
     "units": "ms",
     "description": "Repeat timeout"
   },
-  "enable-half-cycling": {
-    "type": "switch",
-    "default": true,
-    "description": "Enable half position cycling"
-  },
-  "enable-third-cycling": {
-    "type": "switch",
-    "default": true,
-    "description": "Enable third position cycling"
-  },
-  "enable-fourth-cycling": {
-    "type": "switch",
-    "default": true,
-    "description": "Enable fourth position cycling"
-  },
-  "enable-corner-cycling": {
-    "type": "switch",
-    "default": true,
-    "description": "Enable corner position cycling"
-  },
-  "enable-display-cycling": {
-    "type": "switch",
-    "default": true,
-    "description": "Enable display cycling"
+  "halves-header": {
+    "type": "header",
+    "description": "Shortcuts: Halves"
   },
   "shortcut-left-half": {
     "type": "keybinding",
     "default": "<Primary><Super>Left",
     "description": "Left Half"
+  },
+  "shortcut-center-half": {
+    "type": "keybinding",
+    "default": "<Primary><Super>h",
+    "description": "Center Half"
   },
   "shortcut-right-half": {
     "type": "keybinding",
@@ -58,10 +46,9 @@
     "default": "<Primary><Super>Down",
     "description": "Bottom Half"
   },
-  "shortcut-center-half": {
-    "type": "keybinding",
-    "default": "<Primary><Super>h",
-    "description": "Center Half"
+  "corners-header": {
+    "type": "header",
+    "description": "Shortcuts: Corners"
   },
   "shortcut-top-left": {
     "type": "keybinding",
@@ -82,6 +69,10 @@
     "type": "keybinding",
     "default": "<Primary><Super>k",
     "description": "Bottom Right"
+  },
+  "thirds-header": {
+    "type": "header",
+    "description": "Shortcuts: Thirds & Two-Thirds"
   },
   "shortcut-first-third": {
     "type": "keybinding",
@@ -107,6 +98,10 @@
     "type": "keybinding",
     "default": "<Primary><Super>t",
     "description": "Last Two Thirds"
+  },
+  "fourths-header": {
+    "type": "header",
+    "description": "Shortcuts: Fourths & Three-Fourths"
   },
   "shortcut-first-fourth": {
     "type": "keybinding",
@@ -138,6 +133,10 @@
     "default": "<Primary><Super>6",
     "description": "Last Three Fourths"
   },
+  "maximize-header": {
+    "type": "header",
+    "description": "Shortcuts: Maximize & Center"
+  },
   "shortcut-maximize": {
     "type": "keybinding",
     "default": "<Primary><Super>Return",
@@ -158,10 +157,18 @@
     "default": "<Primary><Super>p",
     "description": "Center Prominently"
   },
+  "utility-header": {
+    "type": "header",
+    "description": "Shortcuts: Utility"
+  },
   "shortcut-restore": {
     "type": "keybinding",
     "default": "<Primary><Super>BackSpace",
     "description": "Restore"
+  },
+  "display-header": {
+    "type": "header",
+    "description": "Shortcuts: Display"
   },
   "shortcut-next-display": {
     "type": "keybinding",

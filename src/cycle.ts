@@ -6,7 +6,7 @@
 //
 // Pure function with no Cinnamon dependencies — testable outside Cinnamon.
 
-import { ActionId, ACTION_CYCLE_GROUP, CYCLE_SEQUENCES, CycleGroup } from './constants';
+import { ActionId, CYCLE_SEQUENCES } from './constants';
 import type { WindowState } from './state';
 import type { MintangleSettings } from './settings';
 
@@ -39,14 +39,13 @@ export function resolveCycle(
   now: number,
 ): CycleResult {
   const sequence = CYCLE_SEQUENCES[actionId];
-  const group = ACTION_CYCLE_GROUP[actionId];
 
   const isRepeat =
     state !== null &&
     state.lastActionId === actionId &&
     now - state.lastTimestamp <= settings.repeatTimeout();
 
-  const cyclingActive = settings.enableCycling() && _isCategoryEnabled(group, settings);
+  const cyclingActive = settings.enableCycling();
 
   const nextCycleIndex =
     cyclingActive && isRepeat
@@ -60,24 +59,3 @@ export function resolveCycle(
   };
 }
 
-// ---------------------------------------------------------------------------
-// Private helpers
-// ---------------------------------------------------------------------------
-
-function _isCategoryEnabled(group: CycleGroup, settings: MintangleSettings): boolean {
-  switch (group) {
-    case CycleGroup.HALF:
-      return settings.enableHalfCycling();
-    case CycleGroup.CORNER:
-      return settings.enableCornerCycling();
-    case CycleGroup.THIRD:
-    case CycleGroup.TWO_THIRDS:
-      return settings.enableThirdCycling();
-    case CycleGroup.FOURTH:
-    case CycleGroup.THREE_FOURTHS:
-      return settings.enableFourthCycling();
-    case CycleGroup.NONE:
-      // Single-element sequences — cycling category doesn't apply.
-      return true;
-  }
-}

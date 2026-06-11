@@ -1,6 +1,6 @@
 # BL-12 — Keybinding registration / unregistration
 
-- **Status:** Not started
+- **Status:** Done
 - **Priority:** P1
 - **Depends on:** BL-02, BL-11
 - **Parallelizable with:** BL-09, BL-10

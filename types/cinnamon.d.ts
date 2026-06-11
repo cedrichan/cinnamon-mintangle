@@ -101,6 +101,17 @@ interface MetaWindow {
 }
 
 /**
+ * Cinnamon's global keybinding manager (imports.ui.main.keybindingManager).
+ *
+ * addHotKey returns true on success, false if the binding could not be
+ * registered (e.g. conflict with another binding).
+ */
+interface CinnamonKeybindingManager {
+  addHotKey(name: string, binding: string, callback: () => void): boolean;
+  removeHotKey(name: string): void;
+}
+
+/**
  * The GJS legacy import namespace. Typed loosely for now; tighten per-namespace
  * (gi.Meta, ui.main, misc.extensionUtils, ...) as the extension starts calling
  * real APIs.
@@ -112,6 +123,10 @@ declare const imports: {
   ui: {
     settings: {
       ExtensionSettings: new (bindObject: object, uuid: string) => CinnamonExtensionSettings;
+    };
+    main: {
+      keybindingManager: CinnamonKeybindingManager;
+      [key: string]: any;
     };
     [key: string]: any;
   };

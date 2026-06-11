@@ -186,3 +186,90 @@ export function bottomRight(area: Rect): Rect {
     height: area.height - h,
   });
 }
+
+// ---------------------------------------------------------------------------
+// Thirds and two-thirds placements (BL-05)
+//
+// Boundary points are computed with Math.round so the sub-pixel remainder
+// spreads across slots (max 1px difference between any two slots).
+//
+// Landscape: divides horizontally (left/center/right).
+// Portrait:  divides vertically   (top/center/bottom).
+// ---------------------------------------------------------------------------
+
+/** First third of the work area (left third on landscape, top third on portrait). */
+export function placeFirstThird(workArea: Rect): Rect {
+  if (isLandscape(workArea)) {
+    const b1 = Math.round(workArea.width / 3);
+    return { x: workArea.x, y: workArea.y, width: b1, height: workArea.height };
+  } else {
+    const b1 = Math.round(workArea.height / 3);
+    return { x: workArea.x, y: workArea.y, width: workArea.width, height: b1 };
+  }
+}
+
+/** Center third of the work area. */
+export function placeCenterThird(workArea: Rect): Rect {
+  if (isLandscape(workArea)) {
+    const b1 = Math.round(workArea.width / 3);
+    const b2 = Math.round((2 * workArea.width) / 3);
+    return { x: workArea.x + b1, y: workArea.y, width: b2 - b1, height: workArea.height };
+  } else {
+    const b1 = Math.round(workArea.height / 3);
+    const b2 = Math.round((2 * workArea.height) / 3);
+    return { x: workArea.x, y: workArea.y + b1, width: workArea.width, height: b2 - b1 };
+  }
+}
+
+/** Last third of the work area (right third on landscape, bottom third on portrait). */
+export function placeLastThird(workArea: Rect): Rect {
+  if (isLandscape(workArea)) {
+    const b2 = Math.round((2 * workArea.width) / 3);
+    return {
+      x: workArea.x + b2,
+      y: workArea.y,
+      width: workArea.width - b2,
+      height: workArea.height,
+    };
+  } else {
+    const b2 = Math.round((2 * workArea.height) / 3);
+    return {
+      x: workArea.x,
+      y: workArea.y + b2,
+      width: workArea.width,
+      height: workArea.height - b2,
+    };
+  }
+}
+
+/** First two thirds of the work area (left two thirds on landscape, top two thirds on portrait). */
+export function placeFirstTwoThirds(workArea: Rect): Rect {
+  if (isLandscape(workArea)) {
+    const b2 = Math.round((2 * workArea.width) / 3);
+    return { x: workArea.x, y: workArea.y, width: b2, height: workArea.height };
+  } else {
+    const b2 = Math.round((2 * workArea.height) / 3);
+    return { x: workArea.x, y: workArea.y, width: workArea.width, height: b2 };
+  }
+}
+
+/** Last two thirds of the work area (right two thirds on landscape, bottom two thirds on portrait). */
+export function placeLastTwoThirds(workArea: Rect): Rect {
+  if (isLandscape(workArea)) {
+    const b1 = Math.round(workArea.width / 3);
+    return {
+      x: workArea.x + b1,
+      y: workArea.y,
+      width: workArea.width - b1,
+      height: workArea.height,
+    };
+  } else {
+    const b1 = Math.round(workArea.height / 3);
+    return {
+      x: workArea.x,
+      y: workArea.y + b1,
+      width: workArea.width,
+      height: workArea.height - b1,
+    };
+  }
+}

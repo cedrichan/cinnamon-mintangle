@@ -110,83 +110,120 @@ export function isLandscape(workArea: Rect): boolean {
 // ---------------------------------------------------------------------------
 // BL-04 — Half placements
 //
-// All functions accept a margin-adjusted area (apply applyMargins first).
-// Tiling rule: first half = Math.floor(dim / 2), second half = dim - first,
-// so adjacent placements sum to the full dimension with no gap or overlap.
+// All functions accept the raw work area and margin; applyMargins is called
+// internally. Tiling rule: first half = Math.round(dim / 2), second half =
+// dim - first, so adjacent placements sum to the full dimension with no gap
+// or overlap.
 // ---------------------------------------------------------------------------
 
-export function leftHalf(area: Rect): Rect {
-  const w = Math.floor(area.width / 2);
-  return integerRect({ x: area.x, y: area.y, width: w, height: area.height });
+export function leftHalf(workArea: Rect, margin: number): Rect {
+  const available = applyMargins(workArea, margin);
+  const w = Math.round(available.width / 2);
+  return clampRect(
+    integerRect({ x: available.x, y: available.y, width: w, height: available.height }),
+    available,
+  );
 }
 
-export function rightHalf(area: Rect): Rect {
-  const w = Math.floor(area.width / 2);
-  return integerRect({
-    x: area.x + w,
-    y: area.y,
-    width: area.width - w,
-    height: area.height,
-  });
+export function rightHalf(workArea: Rect, margin: number): Rect {
+  const available = applyMargins(workArea, margin);
+  const w = Math.round(available.width / 2);
+  return clampRect(
+    integerRect({
+      x: available.x + w,
+      y: available.y,
+      width: available.width - w,
+      height: available.height,
+    }),
+    available,
+  );
 }
 
 /** Centered, 50%-width column, full height. */
-export function centerHalf(area: Rect): Rect {
-  const w = Math.floor(area.width / 2);
-  const offset = Math.floor((area.width - w) / 2);
-  return integerRect({ x: area.x + offset, y: area.y, width: w, height: area.height });
+export function centerHalf(workArea: Rect, margin: number): Rect {
+  const available = applyMargins(workArea, margin);
+  const w = Math.round(available.width / 2);
+  const offset = Math.round((available.width - w) / 2);
+  return clampRect(
+    integerRect({ x: available.x + offset, y: available.y, width: w, height: available.height }),
+    available,
+  );
 }
 
-export function topHalf(area: Rect): Rect {
-  const h = Math.floor(area.height / 2);
-  return integerRect({ x: area.x, y: area.y, width: area.width, height: h });
+export function topHalf(workArea: Rect, margin: number): Rect {
+  const available = applyMargins(workArea, margin);
+  const h = Math.round(available.height / 2);
+  return clampRect(
+    integerRect({ x: available.x, y: available.y, width: available.width, height: h }),
+    available,
+  );
 }
 
-export function bottomHalf(area: Rect): Rect {
-  const h = Math.floor(area.height / 2);
-  return integerRect({
-    x: area.x,
-    y: area.y + h,
-    width: area.width,
-    height: area.height - h,
-  });
+export function bottomHalf(workArea: Rect, margin: number): Rect {
+  const available = applyMargins(workArea, margin);
+  const h = Math.round(available.height / 2);
+  return clampRect(
+    integerRect({
+      x: available.x,
+      y: available.y + h,
+      width: available.width,
+      height: available.height - h,
+    }),
+    available,
+  );
 }
 
 // ---------------------------------------------------------------------------
 // BL-04 — Corner placements (quarter-sized)
 //
-// halfW = Math.floor(area.width / 2), halfH = Math.floor(area.height / 2).
-// Right/bottom variants use area.width - halfW / area.height - halfH so all
-// four corners tile the available area exactly.
+// halfW = Math.round(available.width / 2), halfH = Math.round(available.height / 2).
+// Right/bottom variants use available.width - halfW / available.height - halfH so
+// all four corners tile the available area exactly.
 // ---------------------------------------------------------------------------
 
-export function topLeft(area: Rect): Rect {
-  const w = Math.floor(area.width / 2);
-  const h = Math.floor(area.height / 2);
-  return integerRect({ x: area.x, y: area.y, width: w, height: h });
+export function topLeft(workArea: Rect, margin: number): Rect {
+  const available = applyMargins(workArea, margin);
+  const w = Math.round(available.width / 2);
+  const h = Math.round(available.height / 2);
+  return clampRect(
+    integerRect({ x: available.x, y: available.y, width: w, height: h }),
+    available,
+  );
 }
 
-export function topRight(area: Rect): Rect {
-  const w = Math.floor(area.width / 2);
-  const h = Math.floor(area.height / 2);
-  return integerRect({ x: area.x + w, y: area.y, width: area.width - w, height: h });
+export function topRight(workArea: Rect, margin: number): Rect {
+  const available = applyMargins(workArea, margin);
+  const w = Math.round(available.width / 2);
+  const h = Math.round(available.height / 2);
+  return clampRect(
+    integerRect({ x: available.x + w, y: available.y, width: available.width - w, height: h }),
+    available,
+  );
 }
 
-export function bottomLeft(area: Rect): Rect {
-  const w = Math.floor(area.width / 2);
-  const h = Math.floor(area.height / 2);
-  return integerRect({ x: area.x, y: area.y + h, width: w, height: area.height - h });
+export function bottomLeft(workArea: Rect, margin: number): Rect {
+  const available = applyMargins(workArea, margin);
+  const w = Math.round(available.width / 2);
+  const h = Math.round(available.height / 2);
+  return clampRect(
+    integerRect({ x: available.x, y: available.y + h, width: w, height: available.height - h }),
+    available,
+  );
 }
 
-export function bottomRight(area: Rect): Rect {
-  const w = Math.floor(area.width / 2);
-  const h = Math.floor(area.height / 2);
-  return integerRect({
-    x: area.x + w,
-    y: area.y + h,
-    width: area.width - w,
-    height: area.height - h,
-  });
+export function bottomRight(workArea: Rect, margin: number): Rect {
+  const available = applyMargins(workArea, margin);
+  const w = Math.round(available.width / 2);
+  const h = Math.round(available.height / 2);
+  return clampRect(
+    integerRect({
+      x: available.x + w,
+      y: available.y + h,
+      width: available.width - w,
+      height: available.height - h,
+    }),
+    available,
+  );
 }
 
 // ---------------------------------------------------------------------------
@@ -200,80 +237,95 @@ export function bottomRight(area: Rect): Rect {
 // ---------------------------------------------------------------------------
 
 /** First third of the work area (left third on landscape, top third on portrait). */
-export function placeFirstThird(workArea: Rect): Rect {
-  if (isLandscape(workArea)) {
-    const b1 = Math.round(workArea.width / 3);
-    return { x: workArea.x, y: workArea.y, width: b1, height: workArea.height };
+export function placeFirstThird(workArea: Rect, margin: number): Rect {
+  const available = applyMargins(workArea, margin);
+  let rect: Rect;
+  if (isLandscape(available)) {
+    const b1 = Math.round(available.width / 3);
+    rect = { x: available.x, y: available.y, width: b1, height: available.height };
   } else {
-    const b1 = Math.round(workArea.height / 3);
-    return { x: workArea.x, y: workArea.y, width: workArea.width, height: b1 };
+    const b1 = Math.round(available.height / 3);
+    rect = { x: available.x, y: available.y, width: available.width, height: b1 };
   }
+  return clampRect(integerRect(rect), available);
 }
 
 /** Center third of the work area. */
-export function placeCenterThird(workArea: Rect): Rect {
-  if (isLandscape(workArea)) {
-    const b1 = Math.round(workArea.width / 3);
-    const b2 = Math.round((2 * workArea.width) / 3);
-    return { x: workArea.x + b1, y: workArea.y, width: b2 - b1, height: workArea.height };
+export function placeCenterThird(workArea: Rect, margin: number): Rect {
+  const available = applyMargins(workArea, margin);
+  let rect: Rect;
+  if (isLandscape(available)) {
+    const b1 = Math.round(available.width / 3);
+    const b2 = Math.round((2 * available.width) / 3);
+    rect = { x: available.x + b1, y: available.y, width: b2 - b1, height: available.height };
   } else {
-    const b1 = Math.round(workArea.height / 3);
-    const b2 = Math.round((2 * workArea.height) / 3);
-    return { x: workArea.x, y: workArea.y + b1, width: workArea.width, height: b2 - b1 };
+    const b1 = Math.round(available.height / 3);
+    const b2 = Math.round((2 * available.height) / 3);
+    rect = { x: available.x, y: available.y + b1, width: available.width, height: b2 - b1 };
   }
+  return clampRect(integerRect(rect), available);
 }
 
 /** Last third of the work area (right third on landscape, bottom third on portrait). */
-export function placeLastThird(workArea: Rect): Rect {
-  if (isLandscape(workArea)) {
-    const b2 = Math.round((2 * workArea.width) / 3);
-    return {
-      x: workArea.x + b2,
-      y: workArea.y,
-      width: workArea.width - b2,
-      height: workArea.height,
+export function placeLastThird(workArea: Rect, margin: number): Rect {
+  const available = applyMargins(workArea, margin);
+  let rect: Rect;
+  if (isLandscape(available)) {
+    const b2 = Math.round((2 * available.width) / 3);
+    rect = {
+      x: available.x + b2,
+      y: available.y,
+      width: available.width - b2,
+      height: available.height,
     };
   } else {
-    const b2 = Math.round((2 * workArea.height) / 3);
-    return {
-      x: workArea.x,
-      y: workArea.y + b2,
-      width: workArea.width,
-      height: workArea.height - b2,
+    const b2 = Math.round((2 * available.height) / 3);
+    rect = {
+      x: available.x,
+      y: available.y + b2,
+      width: available.width,
+      height: available.height - b2,
     };
   }
+  return clampRect(integerRect(rect), available);
 }
 
 /** First two thirds of the work area (left two thirds on landscape, top two thirds on portrait). */
-export function placeFirstTwoThirds(workArea: Rect): Rect {
-  if (isLandscape(workArea)) {
-    const b2 = Math.round((2 * workArea.width) / 3);
-    return { x: workArea.x, y: workArea.y, width: b2, height: workArea.height };
+export function placeFirstTwoThirds(workArea: Rect, margin: number): Rect {
+  const available = applyMargins(workArea, margin);
+  let rect: Rect;
+  if (isLandscape(available)) {
+    const b2 = Math.round((2 * available.width) / 3);
+    rect = { x: available.x, y: available.y, width: b2, height: available.height };
   } else {
-    const b2 = Math.round((2 * workArea.height) / 3);
-    return { x: workArea.x, y: workArea.y, width: workArea.width, height: b2 };
+    const b2 = Math.round((2 * available.height) / 3);
+    rect = { x: available.x, y: available.y, width: available.width, height: b2 };
   }
+  return clampRect(integerRect(rect), available);
 }
 
 /** Last two thirds of the work area (right two thirds on landscape, bottom two thirds on portrait). */
-export function placeLastTwoThirds(workArea: Rect): Rect {
-  if (isLandscape(workArea)) {
-    const b1 = Math.round(workArea.width / 3);
-    return {
-      x: workArea.x + b1,
-      y: workArea.y,
-      width: workArea.width - b1,
-      height: workArea.height,
+export function placeLastTwoThirds(workArea: Rect, margin: number): Rect {
+  const available = applyMargins(workArea, margin);
+  let rect: Rect;
+  if (isLandscape(available)) {
+    const b1 = Math.round(available.width / 3);
+    rect = {
+      x: available.x + b1,
+      y: available.y,
+      width: available.width - b1,
+      height: available.height,
     };
   } else {
-    const b1 = Math.round(workArea.height / 3);
-    return {
-      x: workArea.x,
-      y: workArea.y + b1,
-      width: workArea.width,
-      height: workArea.height - b1,
+    const b1 = Math.round(available.height / 3);
+    rect = {
+      x: available.x,
+      y: available.y + b1,
+      width: available.width,
+      height: available.height - b1,
     };
   }
+  return clampRect(integerRect(rect), available);
 }
 
 // ---------------------------------------------------------------------------
@@ -284,61 +336,73 @@ export function placeLastTwoThirds(workArea: Rect): Rect {
 // pixel edge — rounding error is at most 1px (satisfies acceptance criterion).
 // ---------------------------------------------------------------------------
 
-/**
- * Compute the four slot boundaries along the primary axis.
- *
- * Returns an array of 5 values [b0, b1, b2, b3, b4] where b0 = origin offset
- * and b4 = origin offset + total extent. Each slot i spans [b[i], b[i+1]).
- */
-function fourthBoundaries(origin: number, extent: number): [number, number, number, number, number] {
-  return [
-    origin,
-    origin + Math.round(extent / 4),
-    origin + Math.round(extent / 2),
-    origin + Math.round((3 * extent) / 4),
-    origin + extent,
-  ];
-}
-
-function placeFourthSlot(workArea: Rect, margin: number, slot: 0 | 1 | 2 | 3): Rect {
+export function placeFirstFourth(workArea: Rect, margin: number): Rect {
   const available = applyMargins(workArea, margin);
   let rect: Rect;
   if (isLandscape(available)) {
-    const b = fourthBoundaries(available.x, available.width);
-    rect = { x: b[slot], y: available.y, width: b[slot + 1] - b[slot], height: available.height };
+    const w = Math.round(available.width / 4);
+    rect = { x: available.x, y: available.y, width: w, height: available.height };
   } else {
-    const b = fourthBoundaries(available.y, available.height);
-    rect = { x: available.x, y: b[slot], width: available.width, height: b[slot + 1] - b[slot] };
+    const h = Math.round(available.height / 4);
+    rect = { x: available.x, y: available.y, width: available.width, height: h };
   }
   return clampRect(integerRect(rect), available);
 }
 
-export function placeFirstFourth(workArea: Rect, margin: number): Rect {
-  return placeFourthSlot(workArea, margin, 0);
-}
-
 export function placeSecondFourth(workArea: Rect, margin: number): Rect {
-  return placeFourthSlot(workArea, margin, 1);
+  const available = applyMargins(workArea, margin);
+  let rect: Rect;
+  if (isLandscape(available)) {
+    const x = available.x + Math.round(available.width / 4);
+    const w = Math.round(available.width / 2) - Math.round(available.width / 4);
+    rect = { x, y: available.y, width: w, height: available.height };
+  } else {
+    const y = available.y + Math.round(available.height / 4);
+    const h = Math.round(available.height / 2) - Math.round(available.height / 4);
+    rect = { x: available.x, y, width: available.width, height: h };
+  }
+  return clampRect(integerRect(rect), available);
 }
 
 export function placeThirdFourth(workArea: Rect, margin: number): Rect {
-  return placeFourthSlot(workArea, margin, 2);
+  const available = applyMargins(workArea, margin);
+  let rect: Rect;
+  if (isLandscape(available)) {
+    const x = available.x + Math.round(available.width / 2);
+    const w = Math.round((3 * available.width) / 4) - Math.round(available.width / 2);
+    rect = { x, y: available.y, width: w, height: available.height };
+  } else {
+    const y = available.y + Math.round(available.height / 2);
+    const h = Math.round((3 * available.height) / 4) - Math.round(available.height / 2);
+    rect = { x: available.x, y, width: available.width, height: h };
+  }
+  return clampRect(integerRect(rect), available);
 }
 
 export function placeLastFourth(workArea: Rect, margin: number): Rect {
-  return placeFourthSlot(workArea, margin, 3);
+  const available = applyMargins(workArea, margin);
+  let rect: Rect;
+  if (isLandscape(available)) {
+    const x = available.x + Math.round((3 * available.width) / 4);
+    const w = available.width - Math.round((3 * available.width) / 4);
+    rect = { x, y: available.y, width: w, height: available.height };
+  } else {
+    const y = available.y + Math.round((3 * available.height) / 4);
+    const h = available.height - Math.round((3 * available.height) / 4);
+    rect = { x: available.x, y, width: available.width, height: h };
+  }
+  return clampRect(integerRect(rect), available);
 }
 
 export function placeFirstThreeFourths(workArea: Rect, margin: number): Rect {
   const available = applyMargins(workArea, margin);
   let rect: Rect;
   if (isLandscape(available)) {
-    const b = fourthBoundaries(available.x, available.width);
-    // Slots 0–2: from b[0] to b[3]
-    rect = { x: b[0], y: available.y, width: b[3] - b[0], height: available.height };
+    const w = Math.round((3 * available.width) / 4);
+    rect = { x: available.x, y: available.y, width: w, height: available.height };
   } else {
-    const b = fourthBoundaries(available.y, available.height);
-    rect = { x: available.x, y: b[0], width: available.width, height: b[3] - b[0] };
+    const h = Math.round((3 * available.height) / 4);
+    rect = { x: available.x, y: available.y, width: available.width, height: h };
   }
   return clampRect(integerRect(rect), available);
 }
@@ -347,12 +411,13 @@ export function placeLastThreeFourths(workArea: Rect, margin: number): Rect {
   const available = applyMargins(workArea, margin);
   let rect: Rect;
   if (isLandscape(available)) {
-    const b = fourthBoundaries(available.x, available.width);
-    // Slots 1–3: from b[1] to b[4]
-    rect = { x: b[1], y: available.y, width: b[4] - b[1], height: available.height };
+    const x = available.x + Math.round(available.width / 4);
+    const w = available.width - Math.round(available.width / 4);
+    rect = { x, y: available.y, width: w, height: available.height };
   } else {
-    const b = fourthBoundaries(available.y, available.height);
-    rect = { x: available.x, y: b[1], width: available.width, height: b[4] - b[1] };
+    const y = available.y + Math.round(available.height / 4);
+    const h = available.height - Math.round(available.height / 4);
+    rect = { x: available.x, y, width: available.width, height: h };
   }
   return clampRect(integerRect(rect), available);
 }

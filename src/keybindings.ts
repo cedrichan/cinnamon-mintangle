@@ -86,7 +86,7 @@ export class KeybindingManager {
         name,
         shortcut,
         () => {
-          log(`Mintangle: key pressed — action '${action}' (${shortcut})`);
+          global.log(`Mintangle: key pressed — action '${action}' (${shortcut})`);
           this._dispatch(action);
         },
       );
@@ -95,12 +95,12 @@ export class KeybindingManager {
         this._errors.delete(action);
       } else {
         const msg = `addHotKey returned false for "${name}" (binding: ${shortcut})`;
-        log(`Mintangle: ${msg}`);
+        global.log(`Mintangle: ${msg}`);
         this._errors.set(action, msg);
       }
     } catch (e) {
       const msg = `addHotKey threw for "${name}" (binding: ${shortcut}): ${e}`;
-      logError(e as object, `Mintangle: failed to register keybinding for ${action}`);
+      global.logError(`Mintangle: failed to register keybinding for ${action}: ${e}`);
       this._errors.set(action, msg);
     }
   }
@@ -112,7 +112,7 @@ export class KeybindingManager {
     try {
       imports.ui.main.keybindingManager.removeHotKey(name);
     } catch (e) {
-      logError(e as object, `Mintangle: failed to unregister keybinding for ${action}`);
+      global.logError(`Mintangle: failed to unregister keybinding for ${action}: ${e}`);
     }
     this._registered.delete(action);
   }

@@ -20,11 +20,6 @@ interface ExtensionMetadata {
   [key: string]: unknown;
 }
 
-/** GJS global: logs a string message. */
-declare function log(message: string): void;
-
-/** GJS global: logs an error object with an optional prefix message. */
-declare function logError(error: object, message?: string): void;
 
 /**
  * A rectangle returned by Muffin/Meta geometry APIs.
@@ -60,6 +55,10 @@ interface MetaDisplay {
  */
 declare const global: {
   display: MetaDisplay;
+  /** Logs a message to Looking Glass (Cinnamon's built-in debugger). */
+  log(message: string): void;
+  logError(message: string): void;
+  logWarning(message: string): void;
   [key: string]: any;
 };
 

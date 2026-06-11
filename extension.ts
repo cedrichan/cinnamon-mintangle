@@ -24,7 +24,7 @@ let _enabled = false;
 
 export function init(metadata: ExtensionMetadata): void {
   extensionMeta = metadata;
-  log(`Mintangle: initialized (uuid: ${metadata?.uuid})`);
+  global.log(`Mintangle: initialized (uuid: ${metadata?.uuid})`);
 }
 
 export function enable(): void {

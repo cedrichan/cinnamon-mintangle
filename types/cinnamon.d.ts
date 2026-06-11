@@ -86,6 +86,8 @@ interface MetaWindow {
    * Excludes panels and other reserved areas — prefer this over raw monitor geometry.
    */
   get_work_area_current_monitor(): MetaRectangle;
+  /** Returns the work area for the monitor at the given Muffin monitor index. */
+  get_work_area_for_monitor(monitorIndex: number): MetaRectangle;
   /**
    * Moves and resizes the window frame.
    * userOp should be false for programmatic placements (not user-initiated drags).

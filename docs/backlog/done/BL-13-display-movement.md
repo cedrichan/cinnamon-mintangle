@@ -1,6 +1,6 @@
 # BL-13 — Multi-monitor / display movement
 
-- **Status:** Not started
+- **Status:** Done
 - **Priority:** P1
 - **Depends on:** BL-03, BL-10
 - **Parallelizable with:** BL-15, BL-16

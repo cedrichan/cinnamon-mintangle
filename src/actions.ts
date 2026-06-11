@@ -39,6 +39,7 @@ import {
   placeAlmostMaximize,
   placeCenter,
   placeCenterProminently,
+  mapRectBetweenWorkAreas,
   type Rect,
 } from './geometry';
 import { resolveCycle } from './cycle';
@@ -107,9 +108,8 @@ export function dispatchAction(
     return;
   }
 
-  // Display movement is implemented in BL-13.
   if (actionId === ActionId.NEXT_DISPLAY || actionId === ActionId.PREVIOUS_DISPLAY) {
-    log('Mintangle: display movement not yet implemented (BL-13)');
+    _handleDisplayMovement(win, windowId, actionId, currentFrame, workArea, stateManager, settings);
     return;
   }
 
@@ -150,6 +150,65 @@ export function dispatchAction(
     lastActionId: actionId,
     lastCycleIndex: nextCycleIndex,
     lastTimestamp: nextTimestamp,
+    previousFrame: currentFrame,
+    lastAppliedFrame: targetRect,
+  });
+}
+
+// ---------------------------------------------------------------------------
+// Private: display movement handler
+// ---------------------------------------------------------------------------
+
+function _handleDisplayMovement(
+  win: MetaWindow,
+  windowId: number,
+  actionId: ActionId.NEXT_DISPLAY | ActionId.PREVIOUS_DISPLAY,
+  currentFrame: Rect,
+  currentWorkArea: Rect,
+  stateManager: WindowStateManager,
+  settings: MintangleSettings,
+): void {
+  if (!settings.enableDisplayCycling()) return;
+
+  const monitorCount = global.display.get_n_monitors();
+  if (monitorCount < 2) return;
+
+  const currentMonitor = win.get_monitor();
+  if (currentMonitor < 0 || currentMonitor >= monitorCount) {
+    log(`Mintangle: invalid current monitor index '${currentMonitor}'`);
+    return;
+  }
+
+  const direction = actionId === ActionId.NEXT_DISPLAY ? 1 : -1;
+  const targetMonitor = (currentMonitor + direction + monitorCount) % monitorCount;
+
+  let targetWorkArea: Rect;
+  try {
+    const raw = win.get_work_area_for_monitor(targetMonitor);
+    targetWorkArea = {
+      x: raw.x,
+      y: raw.y,
+      width: raw.width,
+      height: raw.height,
+    };
+  } catch (e) {
+    logError(e as object, `Mintangle: failed to resolve work area for monitor ${targetMonitor}`);
+    return;
+  }
+
+  const targetRect = mapRectBetweenWorkAreas(currentFrame, currentWorkArea, targetWorkArea);
+
+  try {
+    win.move_resize_frame(false, targetRect.x, targetRect.y, targetRect.width, targetRect.height);
+  } catch (e) {
+    logError(e as object, `Mintangle: failed to apply '${actionId}'`);
+    return;
+  }
+
+  stateManager.update(windowId, {
+    lastActionId: actionId,
+    lastCycleIndex: 0,
+    lastTimestamp: Date.now(),
     previousFrame: currentFrame,
     lastAppliedFrame: targetRect,
   });

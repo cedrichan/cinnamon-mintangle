@@ -107,6 +107,25 @@ export function isLandscape(workArea: Rect): boolean {
   return workArea.width >= workArea.height;
 }
 
+/**
+ * Map a window frame from one monitor work area to another while preserving
+ * its relative position and size. The result is clamped to the target work area.
+ */
+export function mapRectBetweenWorkAreas(rect: Rect, source: Rect, target: Rect): Rect {
+  if (source.width <= 0 || source.height <= 0) {
+    return clampRect(integerRect(rect), target);
+  }
+
+  const mapped: Rect = {
+    x: target.x + ((rect.x - source.x) / source.width) * target.width,
+    y: target.y + ((rect.y - source.y) / source.height) * target.height,
+    width: (rect.width / source.width) * target.width,
+    height: (rect.height / source.height) * target.height,
+  };
+
+  return clampRect(integerRect(mapped), target);
+}
+
 // ---------------------------------------------------------------------------
 // BL-04 — Half placements
 //

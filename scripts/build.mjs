@@ -30,6 +30,11 @@ async function main() {
   await rm(outDir, { recursive: true, force: true });
   await mkdir(outDir, { recursive: true });
 
+  // Debug logging is ON by default, OFF in production builds.
+  // esbuild replaces __MINTANGLE_DEBUG__ with a boolean literal so dead-code
+  // elimination strips all log() / logError() call sites in production.
+  const isProduction = process.env.NODE_ENV === 'production';
+
   await build({
     entryPoints: [join(repoRoot, 'extension.ts')],
     outfile: join(outDir, 'extension.js'),
@@ -41,6 +46,12 @@ async function main() {
     format: 'iife',
     globalName: '__mintangle',
     legalComments: 'none',
+    define: {
+      __MINTANGLE_DEBUG__: String(!isProduction),
+    },
+    // In production, fold constant branches (e.g. `if (false) { ... }`) so the
+    // logging code is removed entirely, not just unreachable.
+    minifySyntax: isProduction,
     footer: {
       js: lifecycleHooks.map((hook) => `var ${hook} = __mintangle.${hook};`).join('\n'),
     },

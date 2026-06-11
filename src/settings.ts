@@ -4,6 +4,7 @@
 // change-listener support. Fails safely if the settings backend is unavailable.
 
 import { ActionId, DEFAULT_SHORTCUTS } from './constants.js';
+import { logError } from './debug.js';
 
 // ---------------------------------------------------------------------------
 // Setting key constants
@@ -36,7 +37,7 @@ export class MintangleSettings {
     try {
       this._settings = new imports.ui.settings.ExtensionSettings(bindObject, uuid);
     } catch (e) {
-      logError(e as object, 'MintangleSettings: ExtensionSettings unavailable, using defaults');
+      logError(`MintangleSettings: ExtensionSettings unavailable, using defaults: ${e}`);
     }
   }
 

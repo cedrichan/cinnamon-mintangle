@@ -14,6 +14,7 @@ import { dispatchAction } from './src/actions';
 import { KeybindingManager } from './src/keybindings';
 import { MintangleSettings } from './src/settings';
 import { WindowStateManager } from './src/state';
+import { log } from './src/debug';
 
 let extensionMeta: ExtensionMetadata | null = null;
 
@@ -24,7 +25,7 @@ let _enabled = false;
 
 export function init(metadata: ExtensionMetadata): void {
   extensionMeta = metadata;
-  global.log(`Mintangle: initialized (uuid: ${metadata?.uuid})`);
+  log(`Mintangle: initialized (uuid: ${metadata?.uuid})`);
 }
 
 export function enable(): void {

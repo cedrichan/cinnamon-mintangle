@@ -5,6 +5,7 @@
 
 import { ActionId, DEFAULT_SHORTCUTS } from './constants.js';
 import { MintangleSettings, shortcutKey } from './settings.js';
+import { log, logError } from './debug.js';
 
 // Prefix for all keybinding names registered with Cinnamon.
 // Unique per extension to avoid conflicts with other extensions or desktop bindings.
@@ -86,7 +87,7 @@ export class KeybindingManager {
         name,
         shortcut,
         () => {
-          global.log(`Mintangle: key pressed — action '${action}' (${shortcut})`);
+          log(`Mintangle: key pressed — action '${action}' (${shortcut})`);
           this._dispatch(action);
         },
       );
@@ -95,12 +96,12 @@ export class KeybindingManager {
         this._errors.delete(action);
       } else {
         const msg = `addHotKey returned false for "${name}" (binding: ${shortcut})`;
-        global.log(`Mintangle: ${msg}`);
+        log(`Mintangle: ${msg}`);
         this._errors.set(action, msg);
       }
     } catch (e) {
       const msg = `addHotKey threw for "${name}" (binding: ${shortcut}): ${e}`;
-      global.logError(`Mintangle: failed to register keybinding for ${action}: ${e}`);
+      logError(`Mintangle: failed to register keybinding for ${action}: ${e}`);
       this._errors.set(action, msg);
     }
   }
@@ -112,7 +113,7 @@ export class KeybindingManager {
     try {
       imports.ui.main.keybindingManager.removeHotKey(name);
     } catch (e) {
-      global.logError(`Mintangle: failed to unregister keybinding for ${action}: ${e}`);
+      logError(`Mintangle: failed to unregister keybinding for ${action}: ${e}`);
     }
     this._registered.delete(action);
   }

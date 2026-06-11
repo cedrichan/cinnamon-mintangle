@@ -45,6 +45,7 @@ import {
 import { resolveCycle } from './cycle';
 import type { WindowStateManager } from './state';
 import type { MintangleSettings } from './settings';
+import { log, logError } from './debug';
 
 // ---------------------------------------------------------------------------
 // Window type constants (Meta.WindowType enum values)
@@ -69,26 +70,26 @@ export function dispatchAction(
   stateManager: WindowStateManager,
   settings: MintangleSettings,
 ): void {
-  global.log(`Mintangle: dispatch '${actionId}'`);
+  log(`Mintangle: dispatch '${actionId}'`);
 
   // 1. Resolve focused window.
   const win = global.display.get_focus_window();
   if (!win) {
-    global.log(`Mintangle: no focused window, skipping action '${actionId}'`);
+    log(`Mintangle: no focused window, skipping action '${actionId}'`);
     return;
   }
 
   // Skip desktop and dock windows — repositioning them is never the intent.
   const winType = win.get_window_type();
   if (winType === META_WINDOW_DESKTOP || winType === META_WINDOW_DOCK) {
-    global.log(`Mintangle: skipping unsupported window type ${winType} for action '${actionId}'`);
+    log(`Mintangle: skipping unsupported window type ${winType} for action '${actionId}'`);
     return;
   }
 
   // Skip windows that can't be maximized (fixed-size dialogs, etc.).
   // Muffin does not expose is_resizable(); can_maximize() is the supported proxy.
   if (!win.can_maximize()) {
-    global.log(`Mintangle: window cannot be maximized, skipping action '${actionId}'`);
+    log(`Mintangle: window cannot be maximized, skipping action '${actionId}'`);
     return;
   }
 
@@ -132,7 +133,7 @@ export function dispatchAction(
     Date.now(),
   );
   if (effectiveAction !== actionId) {
-    global.log(`Mintangle: cycle resolved '${actionId}' → '${effectiveAction}' (index ${nextCycleIndex})`);
+    log(`Mintangle: cycle resolved '${actionId}' → '${effectiveAction}' (index ${nextCycleIndex})`);
   }
 
   // 4. Calculate target rectangle.
@@ -144,18 +145,18 @@ export function dispatchAction(
     currentFrame.height,
   );
   if (!targetRect) {
-    global.log(`Mintangle: no geometry handler for action '${effectiveAction}'`);
+    log(`Mintangle: no geometry handler for action '${effectiveAction}'`);
     return;
   }
 
   // 5. Rect is already validated and clamped by the geometry functions.
 
   // 6. Apply move/resize.
-  global.log(`Mintangle: applying '${effectiveAction}' → {x:${targetRect.x}, y:${targetRect.y}, w:${targetRect.width}, h:${targetRect.height}}`);
+  log(`Mintangle: applying '${effectiveAction}' → {x:${targetRect.x}, y:${targetRect.y}, w:${targetRect.width}, h:${targetRect.height}}`);
   try {
     win.move_resize_frame(false, targetRect.x, targetRect.y, targetRect.width, targetRect.height);
   } catch (e) {
-    global.logError(`Mintangle: failed to apply '${actionId}': ${e}`);
+    logError(`Mintangle: failed to apply '${actionId}': ${e}`);
     return;
   }
 
@@ -186,7 +187,7 @@ function _handleDisplayMovement(
 
   const currentMonitor = win.get_monitor();
   if (currentMonitor < 0 || currentMonitor >= monitorCount) {
-    global.log(`Mintangle: invalid current monitor index '${currentMonitor}'`);
+    log(`Mintangle: invalid current monitor index '${currentMonitor}'`);
     return;
   }
 
@@ -203,7 +204,7 @@ function _handleDisplayMovement(
       height: raw.height,
     };
   } catch (e) {
-    global.logError(`Mintangle: failed to resolve work area for monitor ${targetMonitor}: ${e}`);
+    logError(`Mintangle: failed to resolve work area for monitor ${targetMonitor}: ${e}`);
     return;
   }
 
@@ -212,7 +213,7 @@ function _handleDisplayMovement(
   try {
     win.move_resize_frame(false, targetRect.x, targetRect.y, targetRect.width, targetRect.height);
   } catch (e) {
-    global.logError(`Mintangle: failed to apply '${actionId}': ${e}`);
+    logError(`Mintangle: failed to apply '${actionId}': ${e}`);
     return;
   }
 
@@ -241,7 +242,7 @@ function _handleRestore(
   try {
     win.move_resize_frame(false, frame.x, frame.y, frame.width, frame.height);
   } catch (e) {
-    global.logError(`Mintangle: failed to apply restore frame: ${e}`);
+    logError(`Mintangle: failed to apply restore frame: ${e}`);
     return;
   }
 
@@ -269,7 +270,7 @@ function _resolveWorkArea(win: MetaWindow): Rect | null {
     const raw = win.get_work_area_current_monitor();
     return { x: raw.x, y: raw.y, width: raw.width, height: raw.height };
   } catch (e) {
-    global.log('Mintangle: get_work_area_current_monitor failed, falling back to raw monitor geometry');
+    log('Mintangle: get_work_area_current_monitor failed, falling back to raw monitor geometry');
   }
 
   // Fallback: raw monitor bounds (no panel exclusion).
@@ -278,7 +279,7 @@ function _resolveWorkArea(win: MetaWindow): Rect | null {
     const raw = global.display.get_monitor_geometry(monitorIndex);
     return { x: raw.x, y: raw.y, width: raw.width, height: raw.height };
   } catch (e) {
-    global.logError(`Mintangle: failed to resolve monitor geometry, skipping action: ${e}`);
+    logError(`Mintangle: failed to resolve monitor geometry, skipping action: ${e}`);
     return null;
   }
 }

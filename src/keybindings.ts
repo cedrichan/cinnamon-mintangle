@@ -4,3 +4,5 @@
 // rebinding.
 //
 // Placeholder for BL-01. Registration lands in BL-12.
+
+export {};

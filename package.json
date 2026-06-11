@@ -1,0 +1,17 @@
+{
+  "name": "mintangle",
+  "version": "0.1.0",
+  "description": "Rectangle.app-style keyboard window management for the Cinnamon desktop.",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "node scripts/build.mjs",
+    "typecheck": "tsc --noEmit",
+    "clean": "rm -rf build",
+    "install:local": "npm run build && rm -rf \"$HOME/.local/share/cinnamon/extensions/mintangle@cedrichan\" && mkdir -p \"$HOME/.local/share/cinnamon/extensions/mintangle@cedrichan\" && cp -r build/. \"$HOME/.local/share/cinnamon/extensions/mintangle@cedrichan/\""
+  },
+  "devDependencies": {
+    "esbuild": "^0.24.0",
+    "typescript": "^5.6.0"
+  }
+}

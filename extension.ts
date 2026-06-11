@@ -11,21 +11,26 @@
 //   disable()      — when the extension is turned off.
 //
 // All three must no-op safely (never throw) for this task.
+//
+// These functions are `export`ed so the esbuild bundle can re-expose them as
+// top-level `var init/enable/disable` in build/extension.js, which is how GJS's
+// legacy module loader hands the lifecycle hooks to Cinnamon. See
+// scripts/build.mjs and README.md.
 
 // Stored so later tasks (BL-14) can read uuid/path without re-deriving them.
-let extensionMeta = null;
+let extensionMeta: ExtensionMetadata | null = null;
 
-function init(metadata) {
+export function init(metadata: ExtensionMetadata): void {
     // Cinnamon passes the parsed metadata.json. Keep a reference for later
     // wiring; do not perform any side effects during init.
     extensionMeta = metadata;
 }
 
-function enable() {
+export function enable(): void {
     // Intentionally empty for BL-01. Real wiring lands in BL-14.
 }
 
-function disable() {
+export function disable(): void {
     // Intentionally empty for BL-01. Must remain safe to call even if enable()
     // did nothing.
 }

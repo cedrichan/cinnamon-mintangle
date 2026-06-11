@@ -5,6 +5,13 @@
 // import from here. Do not scatter these values across unrelated files.
 
 // ---------------------------------------------------------------------------
+// Geometry constants
+// ---------------------------------------------------------------------------
+
+/** Pixel inset applied on each side for the almost-maximize placement. */
+export const ALMOST_MAXIMIZE_INSET = 32;
+
+// ---------------------------------------------------------------------------
 // Action IDs
 // ---------------------------------------------------------------------------
 

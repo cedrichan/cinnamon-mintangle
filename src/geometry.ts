@@ -9,6 +9,8 @@
 // safe clamping, and orientation detection.
 // Placement families land in BL-04..BL-07.
 
+import { ALMOST_MAXIMIZE_INSET } from './constants';
+
 // ---------------------------------------------------------------------------
 // Types
 // ---------------------------------------------------------------------------
@@ -352,5 +354,60 @@ export function placeLastThreeFourths(workArea: Rect, margin: number): Rect {
     const b = fourthBoundaries(available.y, available.height);
     rect = { x: available.x, y: b[1], width: available.width, height: b[4] - b[1] };
   }
+  return clampRect(integerRect(rect), available);
+}
+
+// ---------------------------------------------------------------------------
+// Maximize / center placements (BL-07)
+// ---------------------------------------------------------------------------
+
+/**
+ * Fill the margin-adjusted available area exactly.
+ */
+export function placeMaximize(available: Rect): Rect {
+  return clampRect(integerRect({ ...available }), available);
+}
+
+/**
+ * Center the window with a fixed ALMOST_MAXIMIZE_INSET on each side.
+ * Visibly distinct from maximize; size is predictable regardless of monitor size.
+ */
+export function placeAlmostMaximize(available: Rect): Rect {
+  const rect: Rect = {
+    x: available.x + ALMOST_MAXIMIZE_INSET,
+    y: available.y + ALMOST_MAXIMIZE_INSET,
+    width: available.width - 2 * ALMOST_MAXIMIZE_INSET,
+    height: available.height - 2 * ALMOST_MAXIMIZE_INSET,
+  };
+  return clampRect(integerRect(rect), available);
+}
+
+/**
+ * Center the window at its current size without resizing.
+ * If the current size exceeds the available area, clampRect brings it in bounds.
+ */
+export function placeCenter(available: Rect, currentWidth: number, currentHeight: number): Rect {
+  const rect: Rect = {
+    x: available.x + Math.round((available.width - currentWidth) / 2),
+    y: available.y + Math.round((available.height - currentHeight) / 2),
+    width: currentWidth,
+    height: currentHeight,
+  };
+  return clampRect(integerRect(rect), available);
+}
+
+/**
+ * Resize to 70% × 70% of the available area and center.
+ * The 70% is computed from the margin-adjusted area per PRODUCT.md.
+ */
+export function placeCenterProminently(available: Rect): Rect {
+  const width = Math.round(available.width * 0.7);
+  const height = Math.round(available.height * 0.7);
+  const rect: Rect = {
+    x: available.x + Math.round((available.width - width) / 2),
+    y: available.y + Math.round((available.height - height) / 2),
+    width,
+    height,
+  };
   return clampRect(integerRect(rect), available);
 }

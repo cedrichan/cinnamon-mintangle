@@ -17,5 +17,5 @@
     "isolatedModules": true,
     "verbatimModuleSyntax": true
   },
-  "include": ["extension.ts", "src/**/*.ts", "types/**/*.d.ts"]
+  "include": ["src/**/*.ts", "types/**/*.d.ts"]
 }

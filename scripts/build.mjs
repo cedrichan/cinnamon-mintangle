@@ -19,8 +19,9 @@ import { dirname, join } from 'node:path';
 const repoRoot = join(dirname(fileURLToPath(import.meta.url)), '..');
 const outDir = join(repoRoot, 'build');
 
-// Static files copied verbatim into the build.
+// Static files copied verbatim into the build (sourced from assets/).
 const staticAssets = ['metadata.json', 'settings-schema.json'];
+const assetsDir = join(repoRoot, 'assets');
 
 // Top-level globals the legacy GJS loader hands to Cinnamon.
 const lifecycleHooks = ['init', 'enable', 'disable'];
@@ -36,7 +37,7 @@ async function main() {
   const isProduction = process.env.NODE_ENV === 'production';
 
   await build({
-    entryPoints: [join(repoRoot, 'extension.ts')],
+    entryPoints: [join(repoRoot, 'src', 'extension.ts')],
     outfile: join(outDir, 'extension.js'),
     bundle: true,
     // GJS is neither a browser nor Node; "neutral" stops esbuild injecting
@@ -58,7 +59,7 @@ async function main() {
   });
 
   for (const asset of staticAssets) {
-    await copyFile(join(repoRoot, asset), join(outDir, asset));
+    await copyFile(join(assetsDir, asset), join(outDir, asset));
   }
 
   console.log(`Built extension into ${outDir}`);

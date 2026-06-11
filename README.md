@@ -84,7 +84,7 @@ action stays half-size, a third stays a third.
 Cycling resets after the **repeat timeout** (default 1500 ms). If cycling is
 disabled for a category, repeated presses reapply the action's default position.
 
-For the exact per-action cycle order see [`PRODUCT.md`](PRODUCT.md).
+For the exact per-action cycle order see [`PRODUCT.md`](docs/PRODUCT.md).
 
 ## Settings
 
@@ -131,8 +131,9 @@ npm install
 
 ```text
 build/
-  extension.js     # bundled + transpiled from extension.ts and src/
-  metadata.json    # copied verbatim
+  extension.js     # bundled + transpiled from src/extension.ts and src/
+  metadata.json    # copied from assets/
+  settings-schema.json  # copied from assets/
 ```
 
 `build/` is generated and git-ignored — never edit it by hand.
@@ -144,8 +145,11 @@ the lifecycle hooks. See [`scripts/build.mjs`](scripts/build.mjs).
 ### Project layout
 
 ```text
-extension.ts            # Cinnamon lifecycle entry (esbuild entry point)
+assets/
+  metadata.json         # Cinnamon extension manifest
+  settings-schema.json  # Cinnamon settings schema
 src/
+  extension.ts          # Cinnamon lifecycle entry (esbuild entry point)
   actions.ts            # action dispatch (action ID → geometry op)
   geometry.ts           # pure geometry calculations
   keybindings.ts        # shortcut registration / rebinding
@@ -155,14 +159,14 @@ types/
   cinnamon.d.ts         # minimal ambient types for the GJS/Cinnamon runtime
 scripts/
   build.mjs             # esbuild bundle + asset copy → build/
-metadata.json           # Cinnamon extension manifest
-settings-schema.json    # Cinnamon settings schema
+docs/
+  PRODUCT.md            # product behavior specification
 tsconfig.json           # TypeScript config (type-checking)
 package.json            # dev scripts and devDependencies
 ```
 
 ## Documentation
 
-- [`PRODUCT.md`](PRODUCT.md) — product behavior specification (source of truth).
+- [`docs/PRODUCT.md`](docs/PRODUCT.md) — product behavior specification (source of truth).
 - [`AGENTS.md`](AGENTS.md) — developer and agent guidance.
 - [`docs/backlog`](docs/backlog) — work items.

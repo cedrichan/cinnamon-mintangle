@@ -10,11 +10,11 @@
 // legacy module loader hands the lifecycle hooks to Cinnamon. See
 // scripts/build.mjs and README.md.
 
-import { dispatchAction } from './src/actions';
-import { KeybindingManager } from './src/keybindings';
-import { MintangleSettings } from './src/settings';
-import { WindowStateManager } from './src/state';
-import { log } from './src/debug';
+import { dispatchAction } from './actions';
+import { KeybindingManager } from './keybindings';
+import { MintangleSettings } from './settings';
+import { WindowStateManager } from './state';
+import { log } from './debug';
 
 let extensionMeta: ExtensionMetadata | null = null;
 

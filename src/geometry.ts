@@ -5,7 +5,102 @@
 // margins, and repeat state. Kept independent of Cinnamon globals so it can be
 // tested outside Cinnamon.
 //
-// Placeholder for BL-01. Base helpers land in BL-03; geometry families in
-// BL-04..BL-07.
+// Base helpers (BL-03): Rect type, margin application, integer rounding,
+// safe clamping, and orientation detection.
+// Placement families land in BL-04..BL-07.
 
-export {};
+// ---------------------------------------------------------------------------
+// Types
+// ---------------------------------------------------------------------------
+
+/** A screen rectangle in pixels. All fields must be integers after geometry calculations. */
+export interface Rect {
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+}
+
+// ---------------------------------------------------------------------------
+// Minimum window size enforced by clampRect
+// ---------------------------------------------------------------------------
+
+const MIN_WINDOW_SIZE = 50;
+
+// ---------------------------------------------------------------------------
+// Helpers
+// ---------------------------------------------------------------------------
+
+/**
+ * Apply a uniform margin to a work-area rectangle, returning the
+ * margin-adjusted available area.
+ *
+ * Margins are applied once in this shared layer — never per-action.
+ * If the margin would make the area degenerate (zero or negative size),
+ * the original work area is returned unchanged.
+ */
+export function applyMargins(workArea: Rect, margin: number): Rect {
+  if (margin <= 0) return workArea;
+  const adjusted: Rect = {
+    x: workArea.x + margin,
+    y: workArea.y + margin,
+    width: workArea.width - 2 * margin,
+    height: workArea.height - 2 * margin,
+  };
+  if (adjusted.width <= 0 || adjusted.height <= 0) return workArea;
+  return adjusted;
+}
+
+/**
+ * Round all fields of a rectangle to integers.
+ *
+ * All placement outputs must be integers so the window manager receives
+ * whole-pixel coordinates.
+ */
+export function integerRect(rect: Rect): Rect {
+  return {
+    x: Math.round(rect.x),
+    y: Math.round(rect.y),
+    width: Math.round(rect.width),
+    height: Math.round(rect.height),
+  };
+}
+
+/**
+ * Clamp a rectangle so it:
+ *   1. Is at least minWidth × minHeight (defaults to MIN_WINDOW_SIZE each).
+ *   2. Does not extend beyond the available area.
+ *
+ * Size is clamped first, then position, so the result always fits within
+ * `available` even for degenerate inputs.
+ */
+export function clampRect(
+  rect: Rect,
+  available: Rect,
+  minWidth = MIN_WINDOW_SIZE,
+  minHeight = MIN_WINDOW_SIZE,
+): Rect {
+  // Enforce minimum size, capped to available area.
+  const maxW = Math.max(available.width, minWidth);
+  const maxH = Math.max(available.height, minHeight);
+  const w = Math.min(maxW, Math.max(minWidth, rect.width));
+  const h = Math.min(maxH, Math.max(minHeight, rect.height));
+
+  // Clamp position so the rect stays within available.
+  const maxX = available.x + available.width - w;
+  const maxY = available.y + available.height - h;
+  const x = Math.min(Math.max(rect.x, available.x), Math.max(available.x, maxX));
+  const y = Math.min(Math.max(rect.y, available.y), Math.max(available.y, maxY));
+
+  return { x, y, width: w, height: h };
+}
+
+/**
+ * Return true if the work area is landscape-oriented (width >= height).
+ *
+ * Used by thirds and fourths families for orientation-aware placement
+ * (BL-05, BL-06).
+ */
+export function isLandscape(workArea: Rect): boolean {
+  return workArea.width >= workArea.height;
+}

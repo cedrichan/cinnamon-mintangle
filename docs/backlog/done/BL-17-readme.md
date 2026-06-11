@@ -1,6 +1,6 @@
 # BL-17 — README user documentation
 
-- **Status:** Not started
+- **Status:** Done
 - **Priority:** P2
 - **Depends on:** —
 - **Parallelizable with:** BL-15, BL-16, BL-18
@@ -15,13 +15,13 @@ agent/dev notes stay in `AGENTS.md`.
 
 ## Scope
 
-- [ ] Overview: Rectangle.app-style keyboard window management for Cinnamon.
-- [ ] Installation / enable instructions for Linux Mint Cinnamon.
-- [ ] Full default shortcut table (mirroring `PRODUCT.md`).
-- [ ] Explain position-only repeat cycling per category (halves, corners, thirds,
+- [x] Overview: Rectangle.app-style keyboard window management for Cinnamon.
+- [x] Installation / enable instructions for Linux Mint Cinnamon.
+- [x] Full default shortcut table (mirroring `PRODUCT.md`).
+- [x] Explain position-only repeat cycling per category (halves, corners, thirds,
       fourths, three-fourths) and that sizes do not cycle.
-- [ ] Document settings users can change (toggles, repeat timeout).
-- [ ] Keep it in sync with behavior changes (update alongside code).
+- [x] Document settings users can change (toggles, repeat timeout).
+- [x] Keep it in sync with behavior changes (update alongside code).
 
 ## Acceptance criteria
 

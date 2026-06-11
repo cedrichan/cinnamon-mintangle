@@ -18,20 +18,20 @@ For this iteration, repeated shortcut presses should preserve the action’s siz
 
 Examples:
 
-* Repeating `Left Half` should cycle among half-sized positions.
-* Repeating `First Third` should cycle among third-sized positions.
-* Repeating `First Fourth` should cycle among fourth-sized positions.
-* Repeating `Top Left` should cycle among corner positions.
-* Repeating `First Three Fourths` should cycle among three-fourths positions.
+- Repeating `Left Half` should cycle among half-sized positions.
+- Repeating `First Third` should cycle among third-sized positions.
+- Repeating `First Fourth` should cycle among fourth-sized positions.
+- Repeating `Top Left` should cycle among corner positions.
+- Repeating `First Three Fourths` should cycle among three-fourths positions.
 
 Repeated shortcuts should not change from:
 
-* Half to third
-* Half to two-thirds
-* Fourth to three-fourths
-* Corner to half
-* Maximize to almost maximize
-* Center to almost maximize
+- Half to third
+- Half to two-thirds
+- Fourth to three-fourths
+- Corner to half
+- Maximize to almost maximize
+- Center to almost maximize
 
 Dedicated actions should be used for different size categories.
 
@@ -134,15 +134,15 @@ These actions cycle through third-sized placements only.
 
 On landscape monitors:
 
-* First Third = left third
-* Center Third = center third
-* Last Third = right third
+- First Third = left third
+- Center Third = center third
+- Last Third = right third
 
 On portrait monitors:
 
-* First Third = top third
-* Center Third = center third
-* Last Third = bottom third
+- First Third = top third
+- Center Third = center third
+- Last Third = bottom third
 
 #### First Third
 
@@ -197,17 +197,17 @@ These actions cycle through fourth-sized placements only.
 
 On landscape monitors:
 
-* First Fourth = leftmost fourth
-* Second Fourth = second fourth from the left
-* Third Fourth = third fourth from the left
-* Last Fourth = rightmost fourth
+- First Fourth = leftmost fourth
+- Second Fourth = second fourth from the left
+- Third Fourth = third fourth from the left
+- Last Fourth = rightmost fourth
 
 On portrait monitors:
 
-* First Fourth = top fourth
-* Second Fourth = second fourth from the top
-* Third Fourth = third fourth from the top
-* Last Fourth = bottom fourth
+- First Fourth = top fourth
+- Second Fourth = second fourth from the top
+- Third Fourth = third fourth from the top
+- Last Fourth = bottom fourth
 
 #### First Fourth
 
@@ -370,9 +370,9 @@ Remove or defer settings that imply size cycling.
 
 Do not include these v1 settings:
 
-* Half cycle mode
-* Enable half-size cycling
-* Allow left/right to cycle displays
+- Half cycle mode
+- Enable half-size cycling
+- Allow left/right to cycle displays
 
 Keep these settings:
 

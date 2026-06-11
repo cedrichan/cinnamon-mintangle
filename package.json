@@ -7,11 +7,14 @@
   "scripts": {
     "build": "node scripts/build.mjs",
     "typecheck": "tsc --noEmit",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
     "clean": "rm -rf build",
     "install:local": "npm run build && rm -rf \"$HOME/.local/share/cinnamon/extensions/mintangle@cedrichan\" && mkdir -p \"$HOME/.local/share/cinnamon/extensions/mintangle@cedrichan\" && cp -r build/. \"$HOME/.local/share/cinnamon/extensions/mintangle@cedrichan/\""
   },
   "devDependencies": {
     "esbuild": "^0.24.0",
+    "prettier": "^3.8.4",
     "typescript": "^5.6.0"
   }
 }

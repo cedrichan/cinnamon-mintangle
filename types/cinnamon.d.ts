@@ -10,14 +10,14 @@
 
 /** Parsed contents of metadata.json, passed to `init()` by Cinnamon. */
 interface ExtensionMetadata {
-    uuid: string;
-    name: string;
-    description: string;
-    version: string;
-    "cinnamon-version": string[];
-    /** Absolute path to the installed extension directory (added by Cinnamon). */
-    path?: string;
-    [key: string]: unknown;
+  uuid: string;
+  name: string;
+  description: string;
+  version: string;
+  'cinnamon-version': string[];
+  /** Absolute path to the installed extension directory (added by Cinnamon). */
+  path?: string;
+  [key: string]: unknown;
 }
 
 /**
@@ -26,11 +26,11 @@ interface ExtensionMetadata {
  * real APIs.
  */
 declare const imports: {
-    /** GObject-introspection bindings, e.g. imports.gi.Meta, imports.gi.Gio. */
-    gi: Record<string, any>;
-    /** Cinnamon UI modules, e.g. imports.ui.main. */
-    ui: Record<string, any>;
-    /** Cinnamon misc helpers, e.g. imports.misc.extensionUtils. */
-    misc: Record<string, any>;
-    [key: string]: any;
+  /** GObject-introspection bindings, e.g. imports.gi.Meta, imports.gi.Gio. */
+  gi: Record<string, any>;
+  /** Cinnamon UI modules, e.g. imports.ui.main. */
+  ui: Record<string, any>;
+  /** Cinnamon misc helpers, e.g. imports.misc.extensionUtils. */
+  misc: Record<string, any>;
+  [key: string]: any;
 };

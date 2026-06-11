@@ -35,12 +35,12 @@ npm install
 
 ### Commands
 
-| Command                 | What it does                                                        |
-| ----------------------- | ------------------------------------------------------------------- |
+| Command                 | What it does                                                           |
+| ----------------------- | ---------------------------------------------------------------------- |
 | `npm run build`         | Bundle the TypeScript into `build/` (`extension.js`, `metadata.json`). |
-| `npm run typecheck`     | Type-check with `tsc --noEmit` (no output emitted).                 |
-| `npm run clean`         | Remove the `build/` directory.                                      |
-| `npm run install:local` | Build, then copy `build/` into your local Cinnamon extensions dir.  |
+| `npm run typecheck`     | Type-check with `tsc --noEmit` (no output emitted).                    |
+| `npm run clean`         | Remove the `build/` directory.                                         |
+| `npm run install:local` | Build, then copy `build/` into your local Cinnamon extensions dir.     |
 
 ### Build output
 

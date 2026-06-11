@@ -18,24 +18,24 @@ The extension should feel native to Linux Mint Cinnamon, be predictable under re
 
 Target platform:
 
-* Linux Mint Cinnamon
-* Cinnamon extension system
-* Cinnamon/Muffin window manager
-* GJS JavaScript runtime
-* GTK/Cinnamon settings UI conventions
+- Linux Mint Cinnamon
+- Cinnamon extension system
+- Cinnamon/Muffin window manager
+- GJS JavaScript runtime
+- GTK/Cinnamon settings UI conventions
 
 Source language and build:
 
-* Source is written in **TypeScript**.
-* **Node.js** is the development runtime (used only for building, type-checking,
+- Source is written in **TypeScript**.
+- **Node.js** is the development runtime (used only for building, type-checking,
   and tooling — never a runtime dependency of the extension).
-* [esbuild](https://esbuild.github.io/) bundles the TypeScript into a single
+- [esbuild](https://esbuild.github.io/) bundles the TypeScript into a single
   GJS-compatible `extension.js`. `npm run build` emits the loadable extension
   into `build/`, which is what Cinnamon installs and loads.
-* The bundler re-exposes `init` / `enable` / `disable` as top-level `var`s so
+- The bundler re-exposes `init` / `enable` / `disable` as top-level `var`s so
   Cinnamon's legacy `imports` loader can read the lifecycle hooks. See
   `scripts/build.mjs` and `README.md`.
-* `imports.*` (gi/ui/misc) is a GJS global referenced directly — never
+- `imports.*` (gi/ui/misc) is a GJS global referenced directly — never
   `import`ed — so esbuild leaves it untouched. Ambient types live in
   `types/cinnamon.d.ts`, kept minimal and grown as real APIs are used.
 
@@ -43,12 +43,12 @@ Prefer Cinnamon and Muffin APIs directly.
 
 Avoid external shell commands for core behavior such as:
 
-* Getting the focused window
-* Registering shortcuts
-* Moving windows
-* Resizing windows
-* Reading monitor geometry
-* Reading work-area geometry
+- Getting the focused window
+- Registering shortcuts
+- Moving windows
+- Resizing windows
+- Reading monitor geometry
+- Reading work-area geometry
 
 External tools may be used for development scripts, packaging, linting, or diagnostics, but not as runtime dependencies for core window-management behavior unless explicitly justified.
 
@@ -88,13 +88,13 @@ build/
 
 Responsibilities:
 
-* `extension.ts`: Cinnamon extension lifecycle, initialization, enable/disable wiring.
-* `src/actions.ts`: action dispatch and mapping between action IDs and geometry operations.
-* `src/geometry.ts`: pure or mostly pure geometry calculations.
-* `src/keybindings.ts`: shortcut registration, unregistration, and rebinding.
-* `src/settings.ts`: settings loading, validation, defaults, and change listeners.
-* `src/state.ts`: in-memory per-window state for repeated commands and restore behavior.
-* `scripts/build.mjs`: bundles the source into `build/` and copies static assets.
+- `extension.ts`: Cinnamon extension lifecycle, initialization, enable/disable wiring.
+- `src/actions.ts`: action dispatch and mapping between action IDs and geometry operations.
+- `src/geometry.ts`: pure or mostly pure geometry calculations.
+- `src/keybindings.ts`: shortcut registration, unregistration, and rebinding.
+- `src/settings.ts`: settings loading, validation, defaults, and change listeners.
+- `src/state.ts`: in-memory per-window state for repeated commands and restore behavior.
+- `scripts/build.mjs`: bundles the source into `build/` and copies static assets.
 
 Settings UI entry (`prefs`) and `settings-schema.json` are intentionally absent
 until the settings backlog (BL-11/BL-15); add them there.
@@ -113,11 +113,11 @@ If implementation details conflict with `PRODUCT.md`, stop and resolve the produ
 
 Window placement should be computed from:
 
-* action ID
-* active monitor work area
-* orientation
-* margin settings
-* repeat state, when applicable
+- action ID
+- active monitor work area
+- orientation
+- margin settings
+- repeat state, when applicable
 
 Avoid ad hoc geometry special cases unless they are documented.
 
@@ -169,11 +169,11 @@ Hotkey actions should be synchronous and fast.
 
 Per-window state is allowed for:
 
-* repeated shortcut cycling
-* last action
-* last cycle index
-* previous frame for restore
-* last Mintangle-applied frame
+- repeated shortcut cycling
+- last action
+- last cycle index
+- previous frame for restore
+- last Mintangle-applied frame
 
 Do not persist per-window state across Cinnamon restarts.
 
@@ -181,11 +181,11 @@ Do not persist per-window state across Cinnamon restarts.
 
 Settings UI should make it easy to:
 
-* view shortcuts
-* capture shortcuts
-* clear shortcuts
-* reset shortcuts
-* reset all settings
+- view shortcuts
+- capture shortcuts
+- clear shortcuts
+- reset shortcuts
+- reset all settings
 
 Shortcut registration errors or conflicts should be visible in settings where practical.
 
@@ -224,17 +224,17 @@ Repeated left/right shortcuts should not move windows between displays unless `P
 
 At minimum, verify manually on Linux Mint Cinnamon:
 
-* Extension enable/disable
-* Settings page opens
-* Default shortcuts register
-* Shortcut capture works
-* Shortcut reset works
-* Core layouts work
-* Margins apply consistently
-* Repeated shortcut positioning works
-* Restore works
-* Next/previous display works
-* Non-resizable or unsupported windows do not crash the extension
+- Extension enable/disable
+- Settings page opens
+- Default shortcuts register
+- Shortcut capture works
+- Shortcut reset works
+- Core layouts work
+- Margins apply consistently
+- Repeated shortcut positioning works
+- Restore works
+- Next/previous display works
+- Non-resizable or unsupported windows do not crash the extension
 
 When possible, keep geometry calculations testable outside Cinnamon by making `src/geometry.ts` independent of Cinnamon globals.
 
@@ -290,4 +290,3 @@ Before considering a task complete, check:
 6. Are settings persisted correctly?
 7. Is user-facing documentation updated if behavior changed?
 8. Is there a manual test note for the changed behavior?
-

@@ -21,16 +21,16 @@
 let extensionMeta: ExtensionMetadata | null = null;
 
 export function init(metadata: ExtensionMetadata): void {
-    // Cinnamon passes the parsed metadata.json. Keep a reference for later
-    // wiring; do not perform any side effects during init.
-    extensionMeta = metadata;
+  // Cinnamon passes the parsed metadata.json. Keep a reference for later
+  // wiring; do not perform any side effects during init.
+  extensionMeta = metadata;
 }
 
 export function enable(): void {
-    // Intentionally empty for BL-01. Real wiring lands in BL-14.
+  // Intentionally empty for BL-01. Real wiring lands in BL-14.
 }
 
 export function disable(): void {
-    // Intentionally empty for BL-01. Must remain safe to call even if enable()
-    // did nothing.
+  // Intentionally empty for BL-01. Must remain safe to call even if enable()
+  // did nothing.
 }

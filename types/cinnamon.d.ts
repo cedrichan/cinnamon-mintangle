@@ -104,8 +104,8 @@ interface MetaWindow {
   get_window_type(): number;
   /** Returns the index of the monitor the window is currently on. */
   get_monitor(): number;
-  /** Returns true if the window can be resized (false for dialogs, fixed-size apps, etc.). */
-  is_resizable(): boolean;
+  /** Returns true if the window supports maximize (used as a proxy for "manageable by tiling"). */
+  can_maximize(): boolean;
 }
 
 /**

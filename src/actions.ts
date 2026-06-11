@@ -85,9 +85,10 @@ export function dispatchAction(
     return;
   }
 
-  // Non-resizable windows (fixed-size dialogs, etc.) cannot be managed.
-  if (!win.is_resizable()) {
-    global.log(`Mintangle: window is not resizable, skipping action '${actionId}'`);
+  // Skip windows that can't be maximized (fixed-size dialogs, etc.).
+  // Muffin does not expose is_resizable(); can_maximize() is the supported proxy.
+  if (!win.can_maximize()) {
+    global.log(`Mintangle: window cannot be maximized, skipping action '${actionId}'`);
     return;
   }
 

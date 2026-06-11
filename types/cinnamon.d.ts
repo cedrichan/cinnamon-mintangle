@@ -46,6 +46,11 @@ interface MetaDisplay {
   get_focus_window(): MetaWindow | null;
   /** Returns the number of connected monitors. */
   get_n_monitors(): number;
+  /**
+   * Returns the raw geometry for a monitor (no panel exclusion).
+   * Used as a fallback when get_work_area_current_monitor() is unavailable.
+   */
+  get_monitor_geometry(monitorIndex: number): MetaRectangle;
   [key: string]: any;
 }
 
@@ -100,6 +105,8 @@ interface MetaWindow {
   get_window_type(): number;
   /** Returns the index of the monitor the window is currently on. */
   get_monitor(): number;
+  /** Returns true if the window can be resized (false for dialogs, fixed-size apps, etc.). */
+  is_resizable(): boolean;
 }
 
 /**

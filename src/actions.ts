@@ -61,7 +61,8 @@ const META_WINDOW_DOCK = 2;
  * Executes the full dispatch pipeline for the given action ID.
  *
  * Called by the keybinding handler (BL-12) once per keypress.
- * Fails safely on no focused window, unsupported window type, or move failure.
+ * Fails safely on no focused window, unsupported window type, non-resizable
+ * window, unavailable work-area geometry, or move failure.
  */
 export function dispatchAction(
   actionId: ActionId,
@@ -70,11 +71,23 @@ export function dispatchAction(
 ): void {
   // 1. Resolve focused window.
   const win = global.display.get_focus_window();
-  if (!win) return;
+  if (!win) {
+    log(`Mintangle: no focused window, skipping action '${actionId}'`);
+    return;
+  }
 
   // Skip desktop and dock windows — repositioning them is never the intent.
   const winType = win.get_window_type();
-  if (winType === META_WINDOW_DESKTOP || winType === META_WINDOW_DOCK) return;
+  if (winType === META_WINDOW_DESKTOP || winType === META_WINDOW_DOCK) {
+    log(`Mintangle: skipping unsupported window type ${winType} for action '${actionId}'`);
+    return;
+  }
+
+  // Non-resizable windows (fixed-size dialogs, etc.) cannot be managed.
+  if (!win.is_resizable()) {
+    log(`Mintangle: window is not resizable, skipping action '${actionId}'`);
+    return;
+  }
 
   stateManager.register(win);
   const windowId = win.get_stable_sequence();
@@ -89,13 +102,8 @@ export function dispatchAction(
     height: frameRaw.height,
   };
 
-  const workAreaRaw = win.get_work_area_current_monitor();
-  const workArea: Rect = {
-    x: workAreaRaw.x,
-    y: workAreaRaw.y,
-    width: workAreaRaw.width,
-    height: workAreaRaw.height,
-  };
+  const workArea = _resolveWorkArea(win);
+  if (!workArea) return;
 
   // Margin is 0 until BL-15 exposes it as a user setting.
   const margin = 0;
@@ -242,6 +250,34 @@ function _handleRestore(
     lastTimestamp: Date.now(),
     lastAppliedFrame: frame,
   });
+}
+
+// ---------------------------------------------------------------------------
+// Private: work-area resolution with raw-geometry fallback
+// ---------------------------------------------------------------------------
+
+/**
+ * Returns the work area for the window's current monitor.
+ * Falls back to raw monitor geometry if the work-area API is unavailable.
+ * Returns null (and logs) if both attempts fail.
+ */
+function _resolveWorkArea(win: MetaWindow): Rect | null {
+  try {
+    const raw = win.get_work_area_current_monitor();
+    return { x: raw.x, y: raw.y, width: raw.width, height: raw.height };
+  } catch (e) {
+    log('Mintangle: get_work_area_current_monitor failed, falling back to raw monitor geometry');
+  }
+
+  // Fallback: raw monitor bounds (no panel exclusion).
+  try {
+    const monitorIndex = win.get_monitor();
+    const raw = global.display.get_monitor_geometry(monitorIndex);
+    return { x: raw.x, y: raw.y, width: raw.width, height: raw.height };
+  } catch (e) {
+    logError(e as object, 'Mintangle: failed to resolve monitor geometry, skipping action');
+    return null;
+  }
 }
 
 // ---------------------------------------------------------------------------

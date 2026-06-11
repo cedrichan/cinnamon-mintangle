@@ -1,6 +1,6 @@
 # BL-16 — Fail-safe handling & error notifications
 
-- **Status:** Not started
+- **Status:** Done
 - **Priority:** P2
 - **Depends on:** BL-10, BL-11, BL-12
 - **Parallelizable with:** BL-13, BL-15, BL-17

@@ -72,7 +72,7 @@
   },
   "thirds-header": {
     "type": "header",
-    "description": "Shortcuts: Thirds & Two-Thirds"
+    "description": "Shortcuts: Thirds &amp; Two-Thirds"
   },
   "shortcut-first-third": {
     "type": "keybinding",
@@ -101,7 +101,7 @@
   },
   "fourths-header": {
     "type": "header",
-    "description": "Shortcuts: Fourths & Three-Fourths"
+    "description": "Shortcuts: Fourths &amp; Three-Fourths"
   },
   "shortcut-first-fourth": {
     "type": "keybinding",
@@ -135,7 +135,7 @@
   },
   "maximize-header": {
     "type": "header",
-    "description": "Shortcuts: Maximize & Center"
+    "description": "Shortcuts: Maximize &amp; Center"
   },
   "shortcut-maximize": {
     "type": "keybinding",

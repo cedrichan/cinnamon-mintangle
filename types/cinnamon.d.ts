@@ -34,6 +34,19 @@ interface CinnamonExtensionSettings {
 }
 
 /**
+ * Minimal interface for a Muffin/Meta window object.
+ * Grown as backlog items consume real APIs (BL-08+).
+ */
+interface MetaWindow {
+  /** Returns a stable integer that uniquely identifies this window for its lifetime. */
+  get_stable_sequence(): number;
+  /** Connects a GObject signal; returns the handler ID. */
+  connect(signal: string, callback: (...args: any[]) => void): number;
+  /** Disconnects a handler by ID returned from connect(). */
+  disconnect(handlerId: number): void;
+}
+
+/**
  * The GJS legacy import namespace. Typed loosely for now; tighten per-namespace
  * (gi.Meta, ui.main, misc.extensionUtils, ...) as the extension starts calling
  * real APIs.

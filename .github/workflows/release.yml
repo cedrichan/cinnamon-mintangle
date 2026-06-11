@@ -1,0 +1,72 @@
+name: Release
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'package.json'
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Detect version bump
+        id: version
+        run: |
+          VERSION=$(jq -r '.version' package.json)
+          PREV_VERSION=$(git show HEAD~1:package.json 2>/dev/null | jq -r '.version' || echo "")
+          if [ "$VERSION" = "$PREV_VERSION" ]; then
+            echo "Version unchanged ($VERSION) — skipping release"
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "Version bumped: $PREV_VERSION -> $VERSION"
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+            echo "value=$VERSION" >> "$GITHUB_OUTPUT"
+          fi
+
+      - uses: actions/setup-node@v4
+        if: steps.version.outputs.changed == 'true'
+        with:
+          node-version: '20'
+
+      - name: Install dependencies
+        if: steps.version.outputs.changed == 'true'
+        run: npm ci
+
+      - name: Build
+        if: steps.version.outputs.changed == 'true'
+        run: NODE_ENV=production npm run build
+
+      - name: Package
+        if: steps.version.outputs.changed == 'true'
+        env:
+          VERSION: ${{ steps.version.outputs.value }}
+        run: |
+          mkdir mintangle@cedrichan
+          cp -r build/. mintangle@cedrichan/
+          zip -r "mintangle-v${VERSION}.zip" mintangle@cedrichan/
+
+      - name: Create release
+        if: steps.version.outputs.changed == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          VERSION: ${{ steps.version.outputs.value }}
+        run: |
+          LAST_TAG=$(git tag --sort=-version:refname --list 'v*' | head -n1)
+          if [ -n "$LAST_TAG" ]; then
+            git log --pretty=format:"- %s" "$LAST_TAG"..HEAD > notes.txt
+          else
+            git log --pretty=format:"- %s" > notes.txt
+          fi
+          gh release create "v${VERSION}" \
+            --title "Mintangle v${VERSION}" \
+            --notes-file notes.txt \
+            "mintangle-v${VERSION}.zip"

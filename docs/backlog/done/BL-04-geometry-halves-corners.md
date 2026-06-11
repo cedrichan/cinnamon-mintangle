@@ -1,6 +1,6 @@
 # BL-04 — Geometry: halves & corners
 
-- **Status:** Not started
+- **Status:** Done
 - **Priority:** P1
 - **Depends on:** BL-03
 - **Parallelizable with:** BL-05, BL-06, BL-07
@@ -14,13 +14,13 @@ change on repeat (repeat cycling itself lives in BL-09).
 
 ## Scope
 
-- [ ] Half placements: `left-half`, `right-half`, `center-half`, `top-half`,
+- [x] Half placements: `left-half`, `right-half`, `center-half`, `top-half`,
       `bottom-half`. Center Half is a first-class v1 placement.
-- [ ] Corner placements: `top-left`, `top-right`, `bottom-left`, `bottom-right`
+- [x] Corner placements: `top-left`, `top-right`, `bottom-left`, `bottom-right`
       (quarter-sized).
-- [ ] Ensure left/right/center halves tile the available width; top/bottom halves
+- [x] Ensure left/right/center halves tile the available width; top/bottom halves
       tile available height; corners tile both.
-- [ ] All outputs integer and clamped via BL-03 helpers.
+- [x] All outputs integer and clamped via BL-03 helpers.
 
 ## Acceptance criteria
 

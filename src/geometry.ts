@@ -104,3 +104,85 @@ export function clampRect(
 export function isLandscape(workArea: Rect): boolean {
   return workArea.width >= workArea.height;
 }
+
+// ---------------------------------------------------------------------------
+// BL-04 — Half placements
+//
+// All functions accept a margin-adjusted area (apply applyMargins first).
+// Tiling rule: first half = Math.floor(dim / 2), second half = dim - first,
+// so adjacent placements sum to the full dimension with no gap or overlap.
+// ---------------------------------------------------------------------------
+
+export function leftHalf(area: Rect): Rect {
+  const w = Math.floor(area.width / 2);
+  return integerRect({ x: area.x, y: area.y, width: w, height: area.height });
+}
+
+export function rightHalf(area: Rect): Rect {
+  const w = Math.floor(area.width / 2);
+  return integerRect({
+    x: area.x + w,
+    y: area.y,
+    width: area.width - w,
+    height: area.height,
+  });
+}
+
+/** Centered, 50%-width column, full height. */
+export function centerHalf(area: Rect): Rect {
+  const w = Math.floor(area.width / 2);
+  const offset = Math.floor((area.width - w) / 2);
+  return integerRect({ x: area.x + offset, y: area.y, width: w, height: area.height });
+}
+
+export function topHalf(area: Rect): Rect {
+  const h = Math.floor(area.height / 2);
+  return integerRect({ x: area.x, y: area.y, width: area.width, height: h });
+}
+
+export function bottomHalf(area: Rect): Rect {
+  const h = Math.floor(area.height / 2);
+  return integerRect({
+    x: area.x,
+    y: area.y + h,
+    width: area.width,
+    height: area.height - h,
+  });
+}
+
+// ---------------------------------------------------------------------------
+// BL-04 — Corner placements (quarter-sized)
+//
+// halfW = Math.floor(area.width / 2), halfH = Math.floor(area.height / 2).
+// Right/bottom variants use area.width - halfW / area.height - halfH so all
+// four corners tile the available area exactly.
+// ---------------------------------------------------------------------------
+
+export function topLeft(area: Rect): Rect {
+  const w = Math.floor(area.width / 2);
+  const h = Math.floor(area.height / 2);
+  return integerRect({ x: area.x, y: area.y, width: w, height: h });
+}
+
+export function topRight(area: Rect): Rect {
+  const w = Math.floor(area.width / 2);
+  const h = Math.floor(area.height / 2);
+  return integerRect({ x: area.x + w, y: area.y, width: area.width - w, height: h });
+}
+
+export function bottomLeft(area: Rect): Rect {
+  const w = Math.floor(area.width / 2);
+  const h = Math.floor(area.height / 2);
+  return integerRect({ x: area.x, y: area.y + h, width: w, height: area.height - h });
+}
+
+export function bottomRight(area: Rect): Rect {
+  const w = Math.floor(area.width / 2);
+  const h = Math.floor(area.height / 2);
+  return integerRect({
+    x: area.x + w,
+    y: area.y + h,
+    width: area.width - w,
+    height: area.height - h,
+  });
+}

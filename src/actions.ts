@@ -109,7 +109,7 @@ export function dispatchAction(
   const workArea = _resolveWorkArea(win);
   if (!workArea) return;
 
-  const margin = 0;
+  const margin = settings.margin();
 
   // --- Special cases --------------------------------------------------------
 

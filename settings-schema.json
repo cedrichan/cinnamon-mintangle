@@ -1,4 +1,17 @@
 {
+  "layout-header": {
+    "type": "header",
+    "description": "Layout"
+  },
+  "margin": {
+    "type": "scale",
+    "default": 0,
+    "min": 0,
+    "max": 32,
+    "step": 1,
+    "units": "px",
+    "description": "Gap between windows and screen edges"
+  },
   "cycling-header": {
     "type": "header",
     "description": "Cycling"

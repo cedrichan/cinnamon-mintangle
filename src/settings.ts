@@ -13,6 +13,7 @@ import { logError } from './debug.js';
 // Single source of truth for schema key names. Import these in BL-09/BL-12
 // rather than hardcoding strings when connecting change listeners.
 
+export const KEY_MARGIN = 'margin';
 export const KEY_ENABLE_CYCLING = 'enable-cycling';
 export const KEY_REPEAT_TIMEOUT = 'repeat-timeout';
 
@@ -20,6 +21,10 @@ export const KEY_REPEAT_TIMEOUT = 'repeat-timeout';
 export function shortcutKey(action: ActionId): string {
   return `shortcut-${action}`;
 }
+
+export const MARGIN_MIN = 0;
+export const MARGIN_MAX = 32;
+const MARGIN_DEFAULT = 0;
 
 export const REPEAT_TIMEOUT_MIN = 100;
 export const REPEAT_TIMEOUT_MAX = 10000;
@@ -42,6 +47,10 @@ export class MintangleSettings {
   }
 
   // ---- typed getters -------------------------------------------------------
+
+  margin(): number {
+    return this._getInt(KEY_MARGIN, MARGIN_DEFAULT, MARGIN_MIN, MARGIN_MAX);
+  }
 
   enableCycling(): boolean {
     return this._getBool(KEY_ENABLE_CYCLING, true);

@@ -376,10 +376,23 @@ Do not include these v1 settings:
 
 Keep these settings:
 
-| Setting                         |       Type | Default |
-| ------------------------------- | ---------: | ------: |
-| Enable repeated command cycling |    boolean |    true |
-| Repeat timeout                  | integer ms |    1500 |
+| Setting                         |       Type | Default | Min | Max |
+| ------------------------------- | ---------: | ------: | --: | --: |
+| Gap (margin)                    |    integer |       0 |   0 |  32 |
+| Enable repeated command cycling |    boolean |    true |   — |   — |
+| Repeat timeout                  | integer ms |    1500 | 100 | 10000 |
+
+### Margin / Gap Behaviour
+
+`margin` controls the gap (in pixels) between windows and the screen work-area
+edges, and between adjacent tiled windows.
+
+Margin collapsing: when two tiled windows are adjacent, the visual gap between
+them equals `margin` — the same as the gap from any window to the screen edge.
+This is achieved by subtracting `(N−1) × margin` from the effective tile axis
+before computing slot boundaries, where N is the number of equal slots.
+
+`margin = 0` (default) preserves the previous zero-gap behaviour exactly.
 
 When cycling is disabled, repeated shortcut presses reapply the same position.
 Display movement (next/previous display) always works regardless of the cycling setting.

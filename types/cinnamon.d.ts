@@ -20,8 +20,43 @@ interface ExtensionMetadata {
   [key: string]: unknown;
 }
 
+/** GJS global: logs a string message. */
+declare function log(message: string): void;
+
 /** GJS global: logs an error object with an optional prefix message. */
 declare function logError(error: object, message?: string): void;
+
+/**
+ * A rectangle returned by Muffin/Meta geometry APIs.
+ * Fields are integers in screen pixels.
+ */
+interface MetaRectangle {
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+}
+
+/**
+ * Minimal interface for the Meta.Display singleton (BL-10+).
+ * Accessed via `global.display`.
+ */
+interface MetaDisplay {
+  /** Returns the currently focused window, or null if none. */
+  get_focus_window(): MetaWindow | null;
+  /** Returns the number of connected monitors. */
+  get_n_monitors(): number;
+  [key: string]: any;
+}
+
+/**
+ * The GJS `global` object provided by Cinnamon.
+ * `global.display` is the Meta.Display singleton.
+ */
+declare const global: {
+  display: MetaDisplay;
+  [key: string]: any;
+};
 
 /** Wraps Cinnamon's ExtensionSettings backend (imports.ui.settings). */
 interface CinnamonExtensionSettings {
@@ -44,6 +79,25 @@ interface MetaWindow {
   connect(signal: string, callback: (...args: any[]) => void): number;
   /** Disconnects a handler by ID returned from connect(). */
   disconnect(handlerId: number): void;
+  /** Returns the window's current frame rectangle (position + size in screen pixels). */
+  get_frame_rect(): MetaRectangle;
+  /**
+   * Returns the work area for the monitor the window is currently on.
+   * Excludes panels and other reserved areas — prefer this over raw monitor geometry.
+   */
+  get_work_area_current_monitor(): MetaRectangle;
+  /**
+   * Moves and resizes the window frame.
+   * userOp should be false for programmatic placements (not user-initiated drags).
+   */
+  move_resize_frame(userOp: boolean, x: number, y: number, width: number, height: number): void;
+  /**
+   * Returns the Meta.WindowType enum value.
+   * 0 = NORMAL, 1 = DESKTOP, 2 = DOCK, 3 = DIALOG, etc.
+   */
+  get_window_type(): number;
+  /** Returns the index of the monitor the window is currently on. */
+  get_monitor(): number;
 }
 
 /**

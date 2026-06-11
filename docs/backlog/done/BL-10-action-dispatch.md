@@ -1,6 +1,6 @@
 # BL-10 — Action dispatch
 
-- **Status:** Not started
+- **Status:** Done
 - **Priority:** P1
 - **Depends on:** BL-02, BL-04, BL-05, BL-06, BL-07, BL-09
 - **Parallelizable with:** BL-11, BL-12

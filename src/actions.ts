@@ -1,11 +1,248 @@
 // Mintangle — action dispatch.
 //
-// Responsibility (AGENTS.md): action dispatch and mapping between action IDs and
-// geometry operations.
+// Responsibility (AGENTS.md): action dispatch and mapping between action IDs
+// and geometry operations.
 //
-// Cycle resolution (BL-09): see src/cycle.ts — resolveCycle() determines the
-// effective placement and next cycle state for each keypress.
-//
-// Full dispatch (action ID → geometry → window mutation) lands in BL-10.
+// Executes the standard AGENTS.md pipeline per keypress:
+//   1. Resolve focused window.
+//   2. Determine active monitor work area.
+//   3. Determine action + repeat-cycle state.
+//   4. Calculate target rectangle.
+//   5. Validate and clamp rectangle (done inside geometry functions).
+//   6. Apply move/resize.
+//   7. Update runtime state.
 
-export {};
+import { ActionId } from './constants';
+import {
+  applyMargins,
+  leftHalf,
+  rightHalf,
+  centerHalf,
+  topHalf,
+  bottomHalf,
+  topLeft,
+  topRight,
+  bottomLeft,
+  bottomRight,
+  placeFirstThird,
+  placeCenterThird,
+  placeLastThird,
+  placeFirstTwoThirds,
+  placeLastTwoThirds,
+  placeFirstFourth,
+  placeSecondFourth,
+  placeThirdFourth,
+  placeLastFourth,
+  placeFirstThreeFourths,
+  placeLastThreeFourths,
+  placeMaximize,
+  placeAlmostMaximize,
+  placeCenter,
+  placeCenterProminently,
+  type Rect,
+} from './geometry';
+import { resolveCycle } from './cycle';
+import type { WindowStateManager } from './state';
+import type { MintangleSettings } from './settings';
+
+// ---------------------------------------------------------------------------
+// Window type constants (Meta.WindowType enum values)
+// ---------------------------------------------------------------------------
+
+const META_WINDOW_DESKTOP = 1;
+const META_WINDOW_DOCK = 2;
+
+// ---------------------------------------------------------------------------
+// Public API
+// ---------------------------------------------------------------------------
+
+/**
+ * Executes the full dispatch pipeline for the given action ID.
+ *
+ * Called by the keybinding handler (BL-12) once per keypress.
+ * Fails safely on no focused window, unsupported window type, or move failure.
+ */
+export function dispatchAction(
+  actionId: ActionId,
+  stateManager: WindowStateManager,
+  settings: MintangleSettings,
+): void {
+  // 1. Resolve focused window.
+  const win = global.display.get_focus_window();
+  if (!win) return;
+
+  // Skip desktop and dock windows — repositioning them is never the intent.
+  const winType = win.get_window_type();
+  if (winType === META_WINDOW_DESKTOP || winType === META_WINDOW_DOCK) return;
+
+  stateManager.register(win);
+  const windowId = win.get_stable_sequence();
+  const currentState = stateManager.get(windowId);
+
+  // 2. Determine active monitor work area and current frame.
+  const frameRaw = win.get_frame_rect();
+  const currentFrame: Rect = {
+    x: frameRaw.x,
+    y: frameRaw.y,
+    width: frameRaw.width,
+    height: frameRaw.height,
+  };
+
+  const workAreaRaw = win.get_work_area_current_monitor();
+  const workArea: Rect = {
+    x: workAreaRaw.x,
+    y: workAreaRaw.y,
+    width: workAreaRaw.width,
+    height: workAreaRaw.height,
+  };
+
+  // Margin is 0 until BL-15 exposes it as a user setting.
+  const margin = 0;
+
+  // --- Special cases --------------------------------------------------------
+
+  // Restore: reapply the stored previous frame if one exists.
+  if (actionId === ActionId.RESTORE) {
+    _handleRestore(win, windowId, currentState, stateManager);
+    return;
+  }
+
+  // Display movement is implemented in BL-13.
+  if (actionId === ActionId.NEXT_DISPLAY || actionId === ActionId.PREVIOUS_DISPLAY) {
+    log('Mintangle: display movement not yet implemented (BL-13)');
+    return;
+  }
+
+  // --- Cycle resolution (step 3) --------------------------------------------
+
+  const { effectiveAction, nextCycleIndex, nextTimestamp } = resolveCycle(
+    actionId,
+    currentState,
+    settings,
+    Date.now(),
+  );
+
+  // 4. Calculate target rectangle.
+  const targetRect = _computeRect(
+    effectiveAction,
+    workArea,
+    margin,
+    currentFrame.width,
+    currentFrame.height,
+  );
+  if (!targetRect) {
+    log(`Mintangle: no geometry handler for action '${effectiveAction}'`);
+    return;
+  }
+
+  // 5. Rect is already validated and clamped by the geometry functions.
+
+  // 6. Apply move/resize.
+  try {
+    win.move_resize_frame(false, targetRect.x, targetRect.y, targetRect.width, targetRect.height);
+  } catch (e) {
+    logError(e as object, `Mintangle: failed to apply '${actionId}'`);
+    return;
+  }
+
+  // 7. Update runtime state.
+  stateManager.update(windowId, {
+    lastActionId: actionId,
+    lastCycleIndex: nextCycleIndex,
+    lastTimestamp: nextTimestamp,
+    previousFrame: currentFrame,
+    lastAppliedFrame: targetRect,
+  });
+}
+
+// ---------------------------------------------------------------------------
+// Private: restore handler
+// ---------------------------------------------------------------------------
+
+function _handleRestore(
+  win: MetaWindow,
+  windowId: number,
+  state: ReturnType<WindowStateManager['get']>,
+  stateManager: WindowStateManager,
+): void {
+  if (!state?.previousFrame) return;
+
+  const frame = state.previousFrame;
+  try {
+    win.move_resize_frame(false, frame.x, frame.y, frame.width, frame.height);
+  } catch (e) {
+    logError(e as object, 'Mintangle: failed to apply restore frame');
+    return;
+  }
+
+  // Keep previousFrame unchanged so repeated restore reapplies the same
+  // pre-Mintangle frame (PRODUCT.md: "reapply Restore only if a stored frame exists").
+  stateManager.update(windowId, {
+    lastActionId: ActionId.RESTORE,
+    lastCycleIndex: 0,
+    lastTimestamp: Date.now(),
+    lastAppliedFrame: frame,
+  });
+}
+
+// ---------------------------------------------------------------------------
+// Private: geometry dispatch
+// ---------------------------------------------------------------------------
+
+/**
+ * Maps an effective action ID to a target rectangle.
+ *
+ * Halves, corners, thirds, and fourths call their geometry function directly
+ * with (workArea, margin) — those functions apply margins internally.
+ *
+ * Maximize and center functions expect the already-margined available area,
+ * so applyMargins is called here before forwarding.
+ *
+ * Returns null for restore and display actions (handled above).
+ */
+function _computeRect(
+  action: ActionId,
+  workArea: Rect,
+  margin: number,
+  currentWidth: number,
+  currentHeight: number,
+): Rect | null {
+  switch (action) {
+    // Halves
+    case ActionId.LEFT_HALF:           return leftHalf(workArea, margin);
+    case ActionId.CENTER_HALF:         return centerHalf(workArea, margin);
+    case ActionId.RIGHT_HALF:          return rightHalf(workArea, margin);
+    case ActionId.TOP_HALF:            return topHalf(workArea, margin);
+    case ActionId.BOTTOM_HALF:         return bottomHalf(workArea, margin);
+    // Corners
+    case ActionId.TOP_LEFT:            return topLeft(workArea, margin);
+    case ActionId.TOP_RIGHT:           return topRight(workArea, margin);
+    case ActionId.BOTTOM_LEFT:         return bottomLeft(workArea, margin);
+    case ActionId.BOTTOM_RIGHT:        return bottomRight(workArea, margin);
+    // Thirds
+    case ActionId.FIRST_THIRD:         return placeFirstThird(workArea, margin);
+    case ActionId.CENTER_THIRD:        return placeCenterThird(workArea, margin);
+    case ActionId.LAST_THIRD:          return placeLastThird(workArea, margin);
+    case ActionId.FIRST_TWO_THIRDS:    return placeFirstTwoThirds(workArea, margin);
+    case ActionId.LAST_TWO_THIRDS:     return placeLastTwoThirds(workArea, margin);
+    // Fourths
+    case ActionId.FIRST_FOURTH:        return placeFirstFourth(workArea, margin);
+    case ActionId.SECOND_FOURTH:       return placeSecondFourth(workArea, margin);
+    case ActionId.THIRD_FOURTH:        return placeThirdFourth(workArea, margin);
+    case ActionId.LAST_FOURTH:         return placeLastFourth(workArea, margin);
+    case ActionId.FIRST_THREE_FOURTHS: return placeFirstThreeFourths(workArea, margin);
+    case ActionId.LAST_THREE_FOURTHS:  return placeLastThreeFourths(workArea, margin);
+    // Maximize / center (these functions take the margin-adjusted area directly)
+    case ActionId.MAXIMIZE:
+      return placeMaximize(applyMargins(workArea, margin));
+    case ActionId.ALMOST_MAXIMIZE:
+      return placeAlmostMaximize(applyMargins(workArea, margin));
+    case ActionId.CENTER:
+      return placeCenter(applyMargins(workArea, margin), currentWidth, currentHeight);
+    case ActionId.CENTER_PROMINENTLY:
+      return placeCenterProminently(applyMargins(workArea, margin));
+    // Restore and display actions are handled before _computeRect is called.
+    default:
+      return null;
+  }
+}

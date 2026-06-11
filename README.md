@@ -170,3 +170,13 @@ package.json            # dev scripts and devDependencies
 - [`docs/PRODUCT.md`](docs/PRODUCT.md) — product behavior specification (source of truth).
 - [`AGENTS.md`](AGENTS.md) — developer and agent guidance.
 - [`docs/backlog`](docs/backlog) — work items.
+
+
+## Credits
+
+Inspired by [Rectangle.app](https://rectangleapp.com/)
+
+
+## License
+
+[MIT licensed](LICENSE)

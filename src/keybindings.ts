@@ -85,7 +85,10 @@ export class KeybindingManager {
       const ok = imports.ui.main.keybindingManager.addHotKey(
         name,
         shortcut,
-        () => this._dispatch(action),
+        () => {
+          log(`Mintangle: key pressed — action '${action}' (${shortcut})`);
+          this._dispatch(action);
+        },
       );
       if (ok) {
         this._registered.set(action, shortcut);

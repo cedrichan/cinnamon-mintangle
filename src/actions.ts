@@ -69,6 +69,8 @@ export function dispatchAction(
   stateManager: WindowStateManager,
   settings: MintangleSettings,
 ): void {
+  log(`Mintangle: dispatch '${actionId}'`);
+
   // 1. Resolve focused window.
   const win = global.display.get_focus_window();
   if (!win) {
@@ -128,6 +130,9 @@ export function dispatchAction(
     settings,
     Date.now(),
   );
+  if (effectiveAction !== actionId) {
+    log(`Mintangle: cycle resolved '${actionId}' → '${effectiveAction}' (index ${nextCycleIndex})`);
+  }
 
   // 4. Calculate target rectangle.
   const targetRect = _computeRect(
@@ -145,6 +150,7 @@ export function dispatchAction(
   // 5. Rect is already validated and clamped by the geometry functions.
 
   // 6. Apply move/resize.
+  log(`Mintangle: applying '${effectiveAction}' → {x:${targetRect.x}, y:${targetRect.y}, w:${targetRect.width}, h:${targetRect.height}}`);
   try {
     win.move_resize_frame(false, targetRect.x, targetRect.y, targetRect.width, targetRect.height);
   } catch (e) {

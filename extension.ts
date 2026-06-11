@@ -24,10 +24,12 @@ let _enabled = false;
 
 export function init(metadata: ExtensionMetadata): void {
   extensionMeta = metadata;
+  log(`Mintangle: initialized (uuid: ${metadata?.uuid})`);
 }
 
 export function enable(): void {
   if (_enabled) return;
+  log('Mintangle: enabling');
 
   const uuid = extensionMeta?.uuid ?? '';
   _settings = new MintangleSettings({}, uuid);
@@ -40,10 +42,12 @@ export function enable(): void {
   _keybindingManager.enable();
 
   _enabled = true;
+  log('Mintangle: enabled');
 }
 
 export function disable(): void {
   if (!_enabled) return;
+  log('Mintangle: disabling');
 
   _keybindingManager!.destroy();
   _stateManager!.clear();
@@ -54,4 +58,5 @@ export function disable(): void {
   _settings = null;
 
   _enabled = false;
+  log('Mintangle: disabled');
 }

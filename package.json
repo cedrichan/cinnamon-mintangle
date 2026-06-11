@@ -1,6 +1,6 @@
 {
   "name": "mintangle",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Rectangle.app-style keyboard window management for the Cinnamon desktop.",
   "private": true,
   "type": "module",

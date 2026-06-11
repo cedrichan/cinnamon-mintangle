@@ -3,7 +3,7 @@
   "name": "Mintangle",
   "description": "Rectangle.app-style keyboard window management for the Cinnamon desktop.",
   "author": "Cedric Han",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "cinnamon-version": ["6.0", "6.2", "6.4"],
   "url": "https://github.com/cedrichan/cinnamon-mintangle"
 }

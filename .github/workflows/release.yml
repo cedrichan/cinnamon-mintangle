@@ -47,8 +47,9 @@ jobs:
 
       - name: Package
         if: steps.version.outputs.changed == 'true'
+        env:
+          VERSION: ${{ steps.version.outputs.value }}
         run: |
-          VERSION="${{ steps.version.outputs.value }}"
           mkdir mintangle@cedrichan
           cp -r build/. mintangle@cedrichan/
           zip -r "mintangle-v${VERSION}.zip" mintangle@cedrichan/
@@ -57,9 +58,9 @@ jobs:
         if: steps.version.outputs.changed == 'true'
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          VERSION: ${{ steps.version.outputs.value }}
         run: |
-          VERSION="${{ steps.version.outputs.value }}"
-          LAST_TAG=$(git tag --sort=-creatordate --list 'v*' | head -n1)
+          LAST_TAG=$(git tag --sort=-version:refname --list 'v*' | head -n1)
           if [ -n "$LAST_TAG" ]; then
             git log --pretty=format:"- %s" "$LAST_TAG"..HEAD > notes.txt
           else
